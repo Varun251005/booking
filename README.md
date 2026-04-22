@@ -26,3 +26,7 @@ npm run lint
 ## Backend
 
 Place backend code inside `backend/`.
+
+From the project root, run:
+
+```zsh
