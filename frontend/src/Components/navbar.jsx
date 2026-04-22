@@ -6,9 +6,9 @@ const AppNavbar = () => {
   const { cart } = useCart();
 
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar bg="dark" variant="dark" className="app-navbar">
       <Container>
-        <Navbar.Brand as={Link} to="/">FoodApp</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/" className="brand-glow">FoodApp</Navbar.Brand>
         <Nav className="ms-auto">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
           <Nav.Link as={Link} to="/cart">

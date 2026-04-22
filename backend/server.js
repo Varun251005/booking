@@ -18,7 +18,9 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [/^http:\/\/localhost:\d+$/, /^http:\/\/127\.0\.0\.1:\d+$/]
+}));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/foods", foodRoutes);

@@ -6,13 +6,15 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const getItemId = (item) => item._id ?? item.id;
 
   const addToCart = (food) => {
-    const exist = cart.find(item => item.id === food.id);
+    const foodId = getItemId(food);
+    const exist = cart.find(item => getItemId(item) === foodId);
 
     if (exist) {
       setCart(cart.map(item =>
-        item.id === food.id
+        getItemId(item) === foodId
           ? { ...item, quantity: item.quantity + 1 }
           : item
       ));
@@ -21,21 +23,21 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const removeFromCart = (id) => {
-    setCart(cart.filter(item => item.id !== id));
+  const removeFromCart = (itemId) => {
+    setCart(cart.filter(item => getItemId(item) !== itemId));
   };
 
-  const increaseQty = (id) => {
+  const increaseQty = (itemId) => {
     setCart(cart.map(item =>
-      item.id === id
+      getItemId(item) === itemId
         ? { ...item, quantity: item.quantity + 1 }
         : item
     ));
   };
 
-  const decreaseQty = (id) => {
+  const decreaseQty = (itemId) => {
     setCart(cart.map(item =>
-      item.id === id && item.quantity > 1
+      getItemId(item) === itemId && item.quantity > 1
         ? { ...item, quantity: item.quantity - 1 }
         : item
     ));
