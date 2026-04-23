@@ -17,6 +17,7 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 connectDB();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors({
   origin: [/^http:\/\/localhost:\d+$/, /^http:\/\/127\.0\.0\.1:\d+$/]
@@ -30,6 +31,6 @@ app.get("/", (req, res) => {
   res.send("API Running...");
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
