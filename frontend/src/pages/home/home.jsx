@@ -24,7 +24,12 @@ const Home = () => {
           ...food,
           image: resolveFoodImage(food.image || food.name)
         }));
-        setFoods(normalizedFoods.length ? normalizedFoods : fallbackFoods);
+
+        if (normalizedFoods.length >= 10) {
+          setFoods(normalizedFoods);
+        } else {
+          setFoods(fallbackFoods);
+        }
       } catch (err) {
         setFoods(fallbackFoods);
         setError("Could not load foods from server. Showing available menu.");
@@ -66,19 +71,20 @@ const Home = () => {
           <p>Handpicked dishes with clean ingredients and rich flavor.</p>
         </div>
 
-      {loading ? (
-        <p className="status-text">Loading foods...</p>
-      ) : error ? (
-        <p className="status-text error-text">{error}</p>
-      ) : (
-        <Row className="g-4">
-          {foods.map(food => (
-            <Col md={6} lg={4} key={getFoodId(food)}>
-              <FoodCard food={food} onAdd={addToCart} />
-            </Col>
-          ))}
-        </Row>
-      )}
+        {loading ? (
+          <p className="status-text">Loading foods...</p>
+        ) : (
+          <>
+            {error && <p className="status-text error-text">{error}</p>}
+            <Row className="g-4">
+              {foods.map(food => (
+                <Col md={6} lg={3} key={getFoodId(food)}>
+                  <FoodCard food={food} onAdd={addToCart} />
+                </Col>
+              ))}
+            </Row>
+          </>
+        )}
       </Container>
     </div>
   );

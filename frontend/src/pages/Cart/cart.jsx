@@ -15,7 +15,9 @@ const Cart = () => {
     try {
       await API.post("/orders", {
         items: cart.map(item => ({
-          foodId: item._id,
+          foodId: getItemId(item),
+          foodName: item.name,
+          price: item.price,
           quantity: item.quantity
         })),
         totalPrice: total
