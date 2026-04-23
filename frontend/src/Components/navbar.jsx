@@ -6,16 +6,22 @@ const AppNavbar = () => {
   const { cart } = useCart();
 
   return (
-    <Navbar bg="dark" variant="dark" className="app-navbar">
-      <Container>
-        <Navbar.Brand as={Link} to="/" className="brand-glow">FoodApp</Navbar.Brand>
-        <Nav className="ms-auto">
-          <Nav.Link as={Link} to="/">Home</Nav.Link>
-          <Nav.Link as={Link} to="/cart">
+    <Navbar className="app-navbar">
+      <Container fluid className="app-nav-shell">
+        <Navbar.Brand as={Link} to="/" className="brand-glow">Repeat Foods</Navbar.Brand>
+
+        <Nav className="nav-pill-group">
+          <Nav.Link as={Link} to="/">Menu</Nav.Link>
+          <Nav.Link as={Link} to="/orders">Orders</Nav.Link>
+          <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+        </Nav>
+
+        <div className="nav-actions">
+          <Nav.Link as={Link} to="/login" className="nav-action-link">Login</Nav.Link>
+          <Nav.Link as={Link} to="/cart" className="demo-btn">
             Cart ({cart.length})
           </Nav.Link>
-          <Nav.Link as={Link} to="/login">Login</Nav.Link>
-        </Nav>
+        </div>
       </Container>
     </Navbar>
   );

@@ -46,8 +46,7 @@ const Cart = () => {
                 <Button className="theme-btn-sm" onClick={() => increaseQty(getItemId(item))}>+</Button>
 
                 <Button
-                  variant="danger"
-                  className="float-end"
+                  className="float-end theme-btn-sm"
                   onClick={() => removeFromCart(getItemId(item))}
                 >
                   Remove
