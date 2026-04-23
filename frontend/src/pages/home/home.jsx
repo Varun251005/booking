@@ -57,11 +57,6 @@ const Home = () => {
               <Link to="/orders" className="hero-btn-ghost">Track Orders</Link>
             </div>
           </div>
-
-          <div className="hero-side-cards">
-            <div className="floating-note">Fresh picks today</div>
-            <div className="floating-note">Fast delivery in your area</div>
-          </div>
         </div>
       </Container>
 
