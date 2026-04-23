@@ -120,9 +120,9 @@ body {
   background: linear-gradient(160deg, #f4f0ed 0%, #ebe6e2 100%);
   padding: 42px 36px;
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1fr;
   gap: 20px;
-  min-height: 390px;
+  min-height: 320px;
 }
 
 .hero-badge {
@@ -185,23 +185,6 @@ body {
 .hero-btn-ghost:hover {
   color: #1a1a19;
   background: rgba(255, 255, 255, 0.7);
-}
-
-.hero-side-cards {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 14px;
-}
-
-.floating-note {
-  width: min(290px, 100%);
-  background: rgba(255, 255, 255, 0.86);
-  border: 1px solid #d5cfcb;
-  border-radius: 16px;
-  padding: 14px 16px;
-  font-weight: 700;
 }
 
 .menu-shell {
@@ -394,13 +377,8 @@ body {
   }
 
   .hero-grid {
-    grid-template-columns: 1fr;
     padding: 28px 22px;
     min-height: auto;
-  }
-
-  .hero-side-cards {
-    align-items: stretch;
   }
 
   .hero-title {
