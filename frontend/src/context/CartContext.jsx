@@ -1,12 +1,30 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
+const CART_STORAGE_KEY = "booking_cart_items";
+
+const readCartFromStorage = () => {
+  try {
+    const rawCart = localStorage.getItem(CART_STORAGE_KEY);
+    if (!rawCart) return [];
+
+    const parsed = JSON.parse(rawCart);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(readCartFromStorage);
   const getItemId = (item) => item._id ?? item.id;
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (food) => {
     const foodId = getItemId(food);
