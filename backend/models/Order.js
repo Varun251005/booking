@@ -4,8 +4,16 @@ const orderSchema = new mongoose.Schema({
   userId: mongoose.Schema.Types.ObjectId,
   items: [
     {
-      foodId: mongoose.Schema.Types.ObjectId,
-      quantity: Number
+      foodId: {
+        type: String,
+        required: true
+      },
+      foodName: String,
+      price: Number,
+      quantity: {
+        type: Number,
+        default: 1
+      }
     }
   ],
   totalPrice: Number,
