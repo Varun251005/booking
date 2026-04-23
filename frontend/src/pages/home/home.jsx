@@ -45,16 +45,15 @@ const Home = () => {
     <div className="home-page">
       <Container fluid className="hero-shell">
         <div className="hero-grid">
-          <div>
-            <p className="hero-badge">Smart Ordering Experience</p>
-            <h1 className="hero-title">THE EASIEST WAY TO ORDER GREAT FOOD</h1>
-            <p className="hero-subtitle">
-              A curated, premium-style food delivery UI with fast ordering, smooth cart flow,
-              and delightful browsing.
+          <div className="text-start py-2 py-md-3">
+            <p className="hero-badge mb-3">OrderEase</p>
+            <h1 className="hero-title fw-bold">THE EASIEST WAY TO ORDER GREAT FOOD</h1>
+            <p className="hero-subtitle text-muted mb-0">
+              Explore delicious meals, add them to your cart, and enjoy a smooth and fast checkout experience.
             </p>
-            <div className="hero-actions">
-              <Link to="/cart" className="hero-btn-primary">Go to Cart</Link>
-              <Link to="/orders" className="hero-btn-ghost">Track Orders</Link>
+            <div className="hero-actions mt-4">
+              <Link to="/cart" className="hero-btn-primary">View Cart</Link>
+              <Link to="/orders" className="hero-btn-ghost">My Orders</Link>
             </div>
           </div>
         </div>
