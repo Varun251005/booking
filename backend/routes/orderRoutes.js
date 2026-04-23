@@ -15,4 +15,14 @@ router.get("/", async (req, res) => {
   res.json(orders);
 });
 
+router.put("/:id", async (req, res) => {
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { status: req.body.status },
+    { new: true }
+  );
+
+  res.json(order);
+});
+
 export default router;

@@ -1,21 +1,26 @@
+import { resolveFoodImage } from "./foodImageMap";
+
 const foods = [
   {
     id: 1,
-    name: "Burger",
+    name: "Idli",
     price: 120,
-    image: "https://source.unsplash.com/300x200/?burger"
+    image: resolveFoodImage("idli"),
+    category: "Breakfast"
   },
   {
     id: 2,
-    name: "Pizza",
+    name: "Dosa",
     price: 250,
-    image: "https://source.unsplash.com/300x200/?pizza"
+    image: resolveFoodImage("dosa"),
+    category: "Breakfast"
   },
   {
     id: 3,
     name: "Biryani",
     price: 180,
-    image: "https://source.unsplash.com/300x200/?biryani"
+    image: resolveFoodImage("biryani"),
+    category: "Main Course"
   },
 ];
 
