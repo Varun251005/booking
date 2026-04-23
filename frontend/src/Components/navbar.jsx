@@ -8,11 +8,11 @@ const AppNavbar = () => {
   return (
     <Navbar className="app-navbar">
       <Container fluid className="app-nav-shell">
-        <Navbar.Brand as={Link} to="/" className="brand-glow">Repeat Foods</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/" className="brand-glow">OrderEase</Navbar.Brand>
 
         <Nav className="nav-pill-group">
-          <Nav.Link as={Link} to="/">Menu</Nav.Link>
-          <Nav.Link as={Link} to="/orders">Orders</Nav.Link>
+          <Nav.Link as={Link} to="/">Home</Nav.Link>
+          <Nav.Link as={Link} to="/orders">My Orders</Nav.Link>
           <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
         </Nav>
 
