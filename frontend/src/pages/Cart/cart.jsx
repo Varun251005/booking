@@ -1,9 +1,13 @@
-import { Container, ListGroup, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Alert, Button, Container, Form, ListGroup } from "react-bootstrap";
 import { useCart } from "../../context/CartContext";
 import API from "../../services/api";
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCart();
+  const [tableNumber, setTableNumber] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const getItemId = (item) => item._id ?? item.id;
 
   const total = cart.reduce(
@@ -12,7 +16,14 @@ const Cart = () => {
   );
 
   const placeOrder = async () => {
+    if (!tableNumber.trim()) {
+      setErrorMessage("Table number is required");
+      setSuccessMessage("");
+      return;
+    }
+
     try {
+      setErrorMessage("");
       await API.post("/orders", {
         items: cart.map(item => ({
           foodId: getItemId(item),
@@ -20,12 +31,15 @@ const Cart = () => {
           price: item.price,
           quantity: item.quantity
         })),
-        totalPrice: total
+        totalPrice: total,
+        tableNumber: Number(tableNumber)
       });
 
-      alert("Order placed!");
+      setSuccessMessage("Order placed successfully");
+      setTableNumber("");
     } catch (err) {
-      alert("Error placing order");
+      setSuccessMessage("");
+      setErrorMessage("Error placing order");
     }
   };
 
@@ -37,6 +51,20 @@ const Cart = () => {
         <p>No items in cart</p>
       ) : (
         <>
+          {successMessage && <Alert variant="success">{successMessage}</Alert>}
+          {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+
+          <Form.Group className="mb-3">
+            <Form.Label>Table Number</Form.Label>
+            <Form.Control
+              type="number"
+              min="1"
+              value={tableNumber}
+              onChange={(event) => setTableNumber(event.target.value)}
+              placeholder="Enter table number"
+            />
+          </Form.Group>
+
           <ListGroup>
             {cart.map(item => (
               <ListGroup.Item key={getItemId(item)} className="cart-item">

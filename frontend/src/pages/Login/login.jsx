@@ -16,6 +16,7 @@ const Login = () => {
       });
 
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userRole", res.data.user?.role || "");
       alert("Login successful");
     } catch (err) {
       alert("Login failed");
