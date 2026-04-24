@@ -6,6 +6,7 @@ const router = express.Router();
 
 const isDatabaseConnected = () => mongoose.connection.readyState === 1;
 const inMemoryOrders = [];
+const validPaymentStatuses = ["pending", "paid"];
 
 const normalizeOrderItems = (items = []) =>
   items
@@ -28,9 +29,19 @@ const normalizeOrderItems = (items = []) =>
 // CREATE ORDER
 router.post("/", async (req, res) => {
   const normalizedItems = normalizeOrderItems(req.body.items);
+  const tableNumber = Number(req.body.tableNumber);
+  const paymentStatus = req.body.paymentStatus || "pending";
 
   if (!normalizedItems.length) {
     return res.status(400).json({ message: "Order must include valid food items" });
+  }
+
+  if (!tableNumber) {
+    return res.status(400).json({ message: "Table number is required" });
+  }
+
+  if (!validPaymentStatuses.includes(paymentStatus)) {
+    return res.status(400).json({ message: "Invalid payment status" });
   }
 
   const totalPriceFromItems = normalizedItems.reduce(
@@ -42,6 +53,8 @@ router.post("/", async (req, res) => {
     ...req.body,
     items: normalizedItems,
     totalPrice: Number(req.body.totalPrice) || totalPriceFromItems,
+    tableNumber,
+    paymentStatus,
   };
 
   if (!isDatabaseConnected()) {
@@ -49,6 +62,7 @@ router.post("/", async (req, res) => {
       _id: `local-order-${Date.now()}`,
       ...payload,
       status: payload.status || "pending",
+      paymentStatus: payload.paymentStatus || "pending",
     };
 
     inMemoryOrders.unshift(localOrder);
@@ -70,6 +84,24 @@ router.get("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+  const updates = {};
+
+  if (req.body.status) {
+    updates.status = req.body.status;
+  }
+
+  if (req.body.paymentStatus) {
+    if (!validPaymentStatuses.includes(req.body.paymentStatus)) {
+      return res.status(400).json({ message: "Invalid payment status" });
+    }
+
+    updates.paymentStatus = req.body.paymentStatus;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({ message: "No valid fields provided for update" });
+  }
+
   if (!isDatabaseConnected()) {
     const orderIndex = inMemoryOrders.findIndex(
       (order) => order._id === req.params.id
@@ -81,7 +113,7 @@ router.put("/:id", async (req, res) => {
 
     inMemoryOrders[orderIndex] = {
       ...inMemoryOrders[orderIndex],
-      status: req.body.status,
+      ...updates,
     };
 
     return res.json(inMemoryOrders[orderIndex]);
@@ -89,7 +121,7 @@ router.put("/:id", async (req, res) => {
 
   const order = await Order.findByIdAndUpdate(
     req.params.id,
-    { status: req.body.status },
+    updates,
     { new: true }
   );
 
