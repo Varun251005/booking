@@ -311,6 +311,78 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(23, 22, 21, 0.25);
 }
 
+.btn-dark:hover {
+  background-color: #222 !important;
+}
+
+.btn-danger:hover {
+  background-color: #c82333 !important;
+}
+
+.admin-nav-actions .btn {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.95rem;
+  border-radius: 999px;
+}
+
+@media (max-width: 576px) {
+  .app-navbar {
+    padding: 10px 1rem;
+  }
+
+  .brand-glow {
+    font-size: 1.5rem;
+  }
+
+  .app-navbar .navbar-nav {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .app-navbar .nav-link {
+    padding: 6px 0 !important;
+  }
+
+  .admin-nav-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .admin-nav-actions .btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+
+  .hero-shell {
+    padding: 0 14px;
+  }
+
+  .hero-grid {
+    padding: 28px 20px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 9vw, 3rem);
+    max-width: 100%;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-ghost {
+    width: 100%;
+    text-align: center;
+  }
+
+  .page-shell {
+    padding: 20px;
+  }
+}
+
 .theme-btn-sm {
   padding: 0.2rem 0.68rem;
 }
