@@ -13,7 +13,7 @@ const AppNavbar = () => {
         <Nav className="nav-pill-group">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
           <Nav.Link as={Link} to="/orders">My Orders</Nav.Link>
-          <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+          <Nav.Link as={Link} to="/admin/login">Admin</Nav.Link>
         </Nav>
 
         <div className="nav-actions">

@@ -17,20 +17,35 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+    if (!email || !password) {
+      return res.status(400).json("Email and password are required");
+    }
 
-  if (!user) return res.status(400).json("User not found");
+    const user = await User.findOne({ email });
 
-  const match = await bcrypt.compare(password, user.password);
+    if (!user) return res.status(400).json("User not found");
 
-  if (!match) return res.status(400).json("Wrong password");
+    const match = await bcrypt.compare(password, user.password);
 
-  const token = jwt.sign(
-    { id: user._id, role: user.role },
-    process.env.JWT_SECRET
-  );
+    if (!match) return res.status(400).json("Invalid credentials");
 
-  res.json({ token, user });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    res.status(500).json("Login failed");
+  }
 };
