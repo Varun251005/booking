@@ -33,6 +33,7 @@ const AdminOrders = () => {
           <thead>
             <tr>
               <th>Order ID</th>
+              <th>Items Ordered</th>
               <th>Table Number</th>
               <th>Total Price</th>
               <th>Status</th>
@@ -45,6 +46,13 @@ const AdminOrders = () => {
             {orders.map(order => (
               <tr key={order._id}>
                 <td>{order._id}</td>
+                <td>
+                  {(order.items || []).length > 0
+                    ? order.items
+                        .map((item) => item.foodName || item.name || "Unnamed item")
+                        .join(", ")
+                    : "-"}
+                </td>
                 <td>{order.tableNumber ?? "-"}</td>
                 <td>₹{order.totalPrice}</td>
                 <td className="text-capitalize">{order.status}</td>

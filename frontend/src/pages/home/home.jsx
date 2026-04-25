@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import FoodCard from "../../Components/foodcart";
-import OfferSlider from "../../Components/OfferSlider";
+import FoodCard from "../../components/FoodCard";
+import OfferSlider from "../../components/OfferSlider";
 import { useCart } from "../../context/CartContext";
 import API from "../../services/api";
 import fallbackFoods from "../../data/foods";

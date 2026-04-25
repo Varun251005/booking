@@ -2,6 +2,8 @@ import biryaniImage from "../assets/Biryani.jpg";
 import dosaImage from "../assets/Dosa.jpg";
 import idliImage from "../assets/idli.jpg";
 
+const BACKEND_ORIGIN = "http://localhost:5000";
+
 export const FOOD_IMAGE_MAP = {
   biryani: biryaniImage,
   dosa: dosaImage,
@@ -10,6 +12,10 @@ export const FOOD_IMAGE_MAP = {
 
 export const resolveFoodImage = (imageValue = "") => {
   if (!imageValue) return idliImage;
+
+  if (typeof imageValue === "string" && imageValue.startsWith("/uploads/")) {
+    return `${BACKEND_ORIGIN}${imageValue}`;
+  }
 
   const normalized = imageValue
     .toString()
