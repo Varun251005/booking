@@ -26,7 +26,7 @@ const Home = () => {
           image: resolveFoodImage(food.image || food.name)
         }));
 
-        if (normalizedFoods.length > 0) {
+        if (normalizedFoods.length >= 10) {
           setFoods(normalizedFoods);
         } else {
           setFoods(fallbackFoods);
@@ -80,7 +80,7 @@ const Home = () => {
             {error && <p className="status-text error-text">{error}</p>}
             <Row className="g-4">
               {foods.map(food => (
-                <Col xs={6} sm={6} md={4} lg={4} key={getFoodId(food)}>
+                <Col xs={6} sm={6} md={6} lg={6} key={getFoodId(food)}>
                   <FoodCard food={food} onAdd={addToCart} />
                 </Col>
               ))}
