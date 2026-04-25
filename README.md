@@ -53,14 +53,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
----
-
-## ⚠️ Notes
-
-* Image upload currently works using image paths/URLs
-* First load may be slow due to free hosting
-
 ---
 
 ## 👨‍💻 Author
