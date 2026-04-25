@@ -365,14 +365,14 @@ body {
 
 @media (max-width: 576px) {
   .offer-carousel .carousel-item {
-    height: 240px;
+    height: 220px;
   }
 
   .brand-glow {
     font-size: 1.5rem;
-  .offer-carousel .carousel-item {
-    height: 220px;
   }
+
+  .nav-links {
     width: 100%;
     gap: 10px;
     padding-top: 10px;
@@ -422,10 +422,6 @@ body {
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .offer-image {
-    height: 220px;
   }
 
   .hero-btn-primary,
@@ -513,7 +509,7 @@ body {
     max-width: 100%;
   }
 
-  .offer-image {
+  .offer-carousel .carousel-item {
     height: 240px;
   }
 }
