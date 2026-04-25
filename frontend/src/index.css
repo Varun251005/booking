@@ -190,6 +190,7 @@ body {
 .menu-shell {
   margin-top: 26px;
   background: transparent;
+  max-width: 1100px;
 }
 
 .menu-header {
