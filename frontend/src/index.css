@@ -325,6 +325,10 @@ body {
   border-radius: 999px;
 }
 
+.nav-links {
+  gap: 8px;
+}
+
 @media (max-width: 576px) {
   .app-navbar {
     padding: 10px 1rem;
@@ -336,11 +340,12 @@ body {
 
   .app-navbar .navbar-nav {
     width: 100%;
-    gap: 8px;
+    gap: 10px;
+    padding-top: 10px;
   }
 
   .app-navbar .nav-link {
-    padding: 6px 0 !important;
+    padding: 8px 0 !important;
   }
 
   .admin-nav-actions {
@@ -352,6 +357,19 @@ body {
   .admin-nav-actions .btn {
     flex: 1 1 auto;
     min-width: 120px;
+  }
+
+  .food-card {
+    margin-bottom: 0;
+  }
+
+  .food-image {
+    height: 150px;
+  }
+
+  .menu-shell .row {
+    --bs-gutter-x: 0.8rem;
+    --bs-gutter-y: 0.8rem;
   }
 
   .hero-shell {
