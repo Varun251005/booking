@@ -19,7 +19,6 @@ const Home = () => {
     const fetchFoods = async () => {
       try {
         setError("");
-        setLoading(true);
         const res = await API.get("/foods");
         const normalizedFoods = (res.data ?? []).map((food) => ({
           ...food,
@@ -40,6 +39,20 @@ const Home = () => {
     };
 
     fetchFoods();
+
+    const intervalId = window.setInterval(fetchFoods, 10000);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchFoods();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   return (
