@@ -5,7 +5,7 @@ import offer3 from "../assets/3.png";
 
 const OfferSlider = () => {
   return (
-    <Carousel controls={false} indicators interval={3000} className="offer-carousel">
+    <Carousel controls={false} indicators interval={2000} className="offer-carousel">
       <Carousel.Item>
         <img
           className="d-block w-100 offer-image"
