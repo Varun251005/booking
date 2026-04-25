@@ -123,16 +123,16 @@ body {
 }
 
 .hero-text {
-  max-width: 520px;
+  max-width: 700px;
 }
 
 .offers-shell {
   margin-top: 20px;
-  padding: 0 18px;
+  padding: 0 20px;
 }
 
 .offers-inner {
-  max-width: 1320px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
@@ -149,7 +149,7 @@ body {
 }
 
 .offer-image {
-  height: 280px;
+  height: 500px;
   object-fit: cover;
 }
 
