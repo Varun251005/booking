@@ -32,6 +32,9 @@ const AppNavbar = () => {
 
             {role === "admin" && (
               <div className="admin-nav-actions d-flex gap-2 align-items-center">
+                <Link to="/" className="btn btn-dark">
+                  Home
+                </Link>
                 <Link to="/admin/dashboard" className="btn btn-dark">
                   Dashboard
                 </Link>
@@ -40,6 +43,9 @@ const AppNavbar = () => {
                 </Link>
                 <Link to="/admin/add-food" className="btn btn-dark">
                   Add Food
+                </Link>
+                <Link to="/admin/foods" className="btn btn-dark">
+                  Foods
                 </Link>
                 <button className="btn btn-danger" onClick={handleLogout}>
                   Logout
