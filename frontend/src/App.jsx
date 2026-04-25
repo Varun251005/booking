@@ -7,8 +7,8 @@ import AddFood from "./pages/admin/AddFood";
 import AdminOrders from "./pages/admin/Orders";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminFoods from "./pages/admin/Foods";
-import AdminRoute from "./Components/AdminRoute";
-import AppNavbar from "./Components/navbar";
+import AdminRoute from "./components/AdminRoute";
+import AppNavbar from "./components/Navbar";
 
 function App() {
   return (
