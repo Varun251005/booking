@@ -50,30 +50,32 @@ const AdminOrders = () => {
                 <td className="text-capitalize">{order.status}</td>
                 <td className="text-capitalize">{order.paymentStatus || "pending"}</td>
                 <td>
-                  <Button
-                    size="sm"
-                    className="theme-btn-sm"
-                    onClick={() => updateStatus(order._id, "preparing")}
-                  >
-                    Preparing
-                  </Button>
+                  <div className="d-flex flex-column gap-2 align-items-start">
+                    <Button
+                      size="sm"
+                      className="theme-btn-sm"
+                      onClick={() => updateStatus(order._id, "preparing")}
+                    >
+                      Preparing
+                    </Button>
 
-                  <Button
-                    size="sm"
-                    className="ms-2 theme-btn-sm"
-                    onClick={() => updateStatus(order._id, "delivered")}
-                  >
-                    Delivered
-                  </Button>
+                    <Button
+                      size="sm"
+                      className="theme-btn-sm"
+                      onClick={() => updateStatus(order._id, "delivered")}
+                    >
+                      Delivered
+                    </Button>
 
-                  <Button
-                    size="sm"
-                    className="ms-2 theme-btn-sm"
-                    onClick={() => markAsPaid(order._id)}
-                    disabled={(order.paymentStatus || "pending") === "paid"}
-                  >
-                    Mark as Paid
-                  </Button>
+                    <Button
+                      size="sm"
+                      className="theme-btn-sm"
+                      onClick={() => markAsPaid(order._id)}
+                      disabled={(order.paymentStatus || "pending") === "paid"}
+                    >
+                      Mark as Paid
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
