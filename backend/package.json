@@ -6,5 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "multer": "^2.1.1"
   }
 }
