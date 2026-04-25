@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import FoodCard from "../../Components/foodcart";
+import OfferSlider from "../../Components/OfferSlider";
 import { useCart } from "../../context/CartContext";
 import API from "../../services/api";
 import fallbackFoods from "../../data/foods";
@@ -45,19 +46,26 @@ const Home = () => {
     <div className="home-page">
       <Container fluid className="hero-shell">
         <div className="hero-grid">
-          <div className="text-start py-2 py-md-3">
-            <p className="hero-badge mb-3">OrderEase</p>
-            <h1 className="hero-title fw-bold">THE EASIEST WAY TO ORDER GREAT FOOD</h1>
-            <p className="hero-subtitle text-muted mb-0">
-              Explore delicious meals, add them to your cart, and enjoy a smooth and fast checkout experience.
-            </p>
-            <div className="hero-actions mt-4">
-              <Link to="/cart" className="hero-btn-primary">View Cart</Link>
-              <Link to="/orders" className="hero-btn-ghost">My Orders</Link>
+            <div className="text-start py-2 py-md-3 hero-text">
+              <p className="hero-badge mb-3">OrderEase</p>
+              <h1 className="hero-title fw-bold">THE EASIEST WAY TO ORDER GREAT FOOD</h1>
+              <p className="hero-subtitle text-muted mb-0">
+                Explore delicious meals, add them to your cart, and enjoy a smooth and fast checkout experience.
+              </p>
+              <div className="hero-actions mt-4">
+                <Link to="/cart" className="hero-btn-primary">View Cart</Link>
+                <Link to="/orders" className="hero-btn-ghost">My Orders</Link>
+              </div>
             </div>
-          </div>
         </div>
       </Container>
+
+        <Container fluid className="offers-shell">
+          <div className="offers-inner">
+            <h4 className="offers-title">Latest Offers</h4>
+            <OfferSlider />
+          </div>
+        </Container>
 
       <Container className="menu-shell">
         <div className="menu-header">
