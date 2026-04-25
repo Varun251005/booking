@@ -19,11 +19,9 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(
-  cors({
-    origin: true,
-  })
-);
+app.use(cors({
+  origin: [/^http:\/\/localhost:\d+$/, /^http:\/\/127\.0\.0\.1:\d+$/]
+}));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/foods", foodRoutes);
