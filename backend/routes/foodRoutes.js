@@ -32,15 +32,21 @@ router.get("/", async (req, res) => {
     return res.json(foods);
   }
 
-  return res.json(inMemoryFoods);
+  const seededFoods = await Food.insertMany(defaultFoods);
+  return res.json(seededFoods);
 });
 
 // ADD FOOD (ADMIN)
 router.post("/", async (req, res) => {
   const payload = {
     ...req.body,
+    price: Number(req.body.price),
     image: normalizeImageValue(req.body.image || req.body.name)
   };
+
+  if (!payload.name || !Number.isFinite(payload.price) || payload.price <= 0) {
+    return res.status(400).json({ message: "Name and valid price are required" });
+  }
 
   if (!isDatabaseConnected()) {
     const localFood = {
@@ -54,6 +60,34 @@ router.post("/", async (req, res) => {
 
   const food = await Food.create(payload);
   res.json(food);
+});
+
+// DELETE FOOD (ADMIN)
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  if (!isDatabaseConnected()) {
+    const index = inMemoryFoods.findIndex((food) => food._id === id);
+
+    if (index === -1) {
+      return res.status(404).json({ message: "Food not found" });
+    }
+
+    inMemoryFoods.splice(index, 1);
+    return res.json({ message: "Food deleted" });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: "Food not found" });
+  }
+
+  const deletedFood = await Food.findByIdAndDelete(id);
+
+  if (!deletedFood) {
+    return res.status(404).json({ message: "Food not found" });
+  }
+
+  return res.json({ message: "Food deleted" });
 });
 
 router.post("/seed-defaults", async (req, res) => {
