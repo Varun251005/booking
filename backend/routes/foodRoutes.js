@@ -1,9 +1,48 @@
 import express from "express";
 import mongoose from "mongoose";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import Food from "../models/Food.js";
 import defaultFoods from "../data/defaultFoods.js";
 
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, "..", "uploads", "foods");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => {
+    const extension = path.extname(file.originalname || "").toLowerCase() || ".jpg";
+    const safeBase = (path.basename(file.originalname, extension) || "food")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    cb(null, `${Date.now()}-${safeBase}${extension}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+      return;
+    }
+
+    cb(new Error("Only image files are allowed"));
+  }
+});
 
 const normalizeImageValue = (value = "") =>
   value
@@ -37,11 +76,12 @@ router.get("/", async (req, res) => {
 });
 
 // ADD FOOD (ADMIN)
-router.post("/", async (req, res) => {
+router.post("/", upload.single("imageFile"), async (req, res) => {
+  const uploadedImagePath = req.file ? `/uploads/foods/${req.file.filename}` : "";
   const payload = {
     ...req.body,
     price: Number(req.body.price),
-    image: normalizeImageValue(req.body.image || req.body.name)
+    image: uploadedImagePath || normalizeImageValue(req.body.image || req.body.name)
   };
 
   if (!payload.name || !Number.isFinite(payload.price) || payload.price <= 0) {
@@ -60,6 +100,18 @@ router.post("/", async (req, res) => {
 
   const food = await Food.create(payload);
   res.json(food);
+});
+
+router.use((error, _req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    return res.status(400).json({ message: error.message });
+  }
+
+  if (error?.message === "Only image files are allowed") {
+    return res.status(400).json({ message: error.message });
+  }
+
+  return next(error);
 });
 
 // DELETE FOOD (ADMIN)
