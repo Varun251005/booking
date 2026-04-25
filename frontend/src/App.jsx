@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AddFood from "./pages/admin/AddFood";
 import AdminOrders from "./pages/admin/Orders";
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminFoods from "./pages/admin/Foods";
 import AdminRoute from "./Components/AdminRoute";
 import AppNavbar from "./Components/navbar";
 
@@ -40,6 +41,14 @@ function App() {
           element={(
             <AdminRoute>
               <AdminOrders />
+            </AdminRoute>
+          )}
+        />
+        <Route
+          path="/admin/foods"
+          element={(
+            <AdminRoute>
+              <AdminFoods />
             </AdminRoute>
           )}
         />
