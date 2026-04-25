@@ -1,32 +1,68 @@
-# Booking Workspace
+# 🍽️ OrderEase – Food Ordering Web App
 
-This project is now organized into separate folders:
+🚀 **Live Site:** https://orderease0.netlify.app
 
-- `frontend/` - React + Vite client app
-- `backend/` - backend/server code
+---
 
-## Frontend
+## 📌 About
 
-From the project root, run:
+OrderEase is a full-stack food ordering web application that allows users to browse menu items, add them to a cart, and place orders.
+It also includes an admin panel to manage food items and orders.
+
+---
+
+## ✨ Features
+
+### 👤 User
+
+* Browse food items
+* Add to cart
+* View orders
+
+### 🔐 Admin
+
+* Admin login
+* Add food items
+* Manage menu
+* View orders
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** React (Vite), Bootstrap
+* **Backend:** Node.js, Express
+* **Database:** MongoDB
+* **Deployment:** Netlify (Frontend), Render (Backend)
+
+---
+
+## 🚀 How to Run Locally
 
 ```bash
+git clone <your-repo-link>
+cd booking
+
+# backend
+cd backend
+npm install
+npm start
+
+# frontend
 cd frontend
+npm install
 npm run dev
 ```
 
-Other frontend commands:
+---
 
-```bash
-cd frontend
-npm run build
-npm run preview
-npm run lint
-```
+## ⚠️ Notes
 
-## Backend
+* Image upload currently works using image paths/URLs
+* First load may be slow due to free hosting
 
-Place backend code inside `backend/`.
+---
 
-From the project root, run:
+## 👨‍💻 Author
 
-```zsh
+Varun Kumar
