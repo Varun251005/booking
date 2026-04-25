@@ -2,18 +2,9 @@ import { Container, Button, Card, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    window.location.href = "/admin/login";
-  };
-
   return (
     <Container className="mt-4 page-shell admin-shell">
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-        <h2 className="page-title mb-0">Admin Dashboard</h2>
-        <Button className="theme-btn" onClick={handleLogout}>Logout</Button>
-      </div>
+      <h2 className="page-title mb-4">Admin Dashboard</h2>
 
       <Row className="g-3">
         <Col md={4}>
