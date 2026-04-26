@@ -13,8 +13,9 @@ export const FOOD_IMAGE_MAP = {
 export const resolveFoodImage = (imageValue = "") => {
   if (!imageValue) return idliImage;
 
-  if (typeof imageValue === "string" && imageValue.startsWith("/uploads/")) {
-    return `${BACKEND_ORIGIN}${imageValue}`;
+  if (typeof imageValue === "string" && (imageValue.startsWith("/") || imageValue.startsWith("http"))) {
+    if (imageValue.startsWith("/uploads/")) return `${BACKEND_ORIGIN}${imageValue}`;
+    return imageValue;
   }
 
   const normalized = imageValue
