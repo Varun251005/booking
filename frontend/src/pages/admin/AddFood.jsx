@@ -1,59 +1,17 @@
 import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import API from "../../services/api";
-import { resolveFoodImage } from "../../data/foodImageMap";
-
-const imageOptions = ["idli", "dosa", "biryani"];
 
 const AddFood = () => {
-  const [food, setFood] = useState({
-    name: "",
-    price: "",
-    image: "",
-    category: ""
-  });
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+  const [food, setFood] = useState({ name: "", price: "", image: "", category: "" });
 
-  const handleChange = (e) => {
-    setFood({ ...food, [e.target.name]: e.target.value });
-  };
-
-  const handleImageFileChange = (e) => {
-    const selectedFile = e.target.files?.[0] || null;
-    setImageFile(selectedFile);
-
-    if (!selectedFile) {
-      setImagePreview("");
-      return;
-    }
-
-    const previewUrl = URL.createObjectURL(selectedFile);
-    setImagePreview(previewUrl);
-  };
+  const handleChange = (e) => setFood({ ...food, [e.target.name]: e.target.value });
 
   const handleSubmit = async () => {
     try {
-      const payload = new FormData();
-      payload.append("name", food.name);
-      payload.append("price", food.price);
-      payload.append("category", food.category);
-      payload.append("image", food.image.trim().toLowerCase());
-
-      if (imageFile) {
-        payload.append("imageFile", imageFile);
-      }
-
-      await API.post("/foods", payload);
+      await API.post("/foods", food);
       alert("Food added!");
-      setFood({
-        name: "",
-        price: "",
-        image: "",
-        category: ""
-      });
-      setImageFile(null);
-      setImagePreview("");
+      setFood({ name: "", price: "", image: "", category: "" });
     } catch {
       alert("Error adding food");
     }
@@ -82,39 +40,16 @@ const AddFood = () => {
           className="mb-2"
         />
 
-        <Form.Select
+        <Form.Control
           name="image"
+          placeholder="Image URL (e.g. /images/burger.png)"
           value={food.image}
           onChange={handleChange}
           className="mb-2"
-        >
-          <option value="">Select Image</option>
-          {imageOptions.map((item) => (
-            <option key={item} value={item}>
-              {item[0].toUpperCase() + item.slice(1)}
-            </option>
-          ))}
-        </Form.Select>
-
-        <Form.Control
-          type="file"
-          accept="image/*"
-          onChange={handleImageFileChange}
-          className="mb-2"
         />
 
-        {imagePreview ? (
-          <img
-            src={imagePreview}
-            alt={food.name || "Food preview"}
-            className="food-preview"
-          />
-        ) : food.image ? (
-          <img
-            src={resolveFoodImage(food.image)}
-            alt={food.name || food.image}
-            className="food-preview"
-          />
+        {food.image ? (
+          <img src={food.image} alt="preview" className="food-preview mb-2" />
         ) : null}
 
         <Form.Control
