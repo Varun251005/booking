@@ -324,35 +324,33 @@ body {
   color: #5a5551;
 }
 
-.theme-btn,
-.theme-btn-sm {
+.btn.theme-btn,
+.btn.theme-btn-sm {
   border-radius: 999px;
-  background: #000000;
-  border: 1px solid #000000;
-  color: #f8f5f3;
+  background: #000000 !important;
+  border: 1px solid #000000 !important;
+  color: #f8f5f3 !important;
   font-weight: 700;
 }
 
-.theme-btn:hover,
-.theme-btn-sm:hover {
-  background: #111111;
-  border-color: #111111;
-  color: #f8f5f3;
+.btn.theme-btn:hover,
+.btn.theme-btn-sm:hover {
+  background: #111111 !important;
+  border-color: #111111 !important;
+  color: #f8f5f3 !important;
 }
 
-.theme-btn:focus,
-.theme-btn-sm:focus {
+.btn.theme-btn:focus,
+.btn.theme-btn-sm:focus {
   box-shadow: 0 0 0 0.2rem rgba(23, 22, 21, 0.25);
 }
 
-.btn-dark {
-  background-color: #000000 !important;
-  border-color: #000000 !important;
+.btn-dark:hover {
+  background-color: #222 !important;
 }
 
-.btn-dark:hover {
-  background-color: #111111 !important;
-  border-color: #111111 !important;
+.btn-danger:hover {
+  background-color: #c82333 !important;
 }
 
 .admin-nav-actions .btn {

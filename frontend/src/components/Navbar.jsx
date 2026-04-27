@@ -47,7 +47,7 @@ const AppNavbar = () => {
                 <Link to="/admin/foods" className="btn btn-dark">
                   Foods
                 </Link>
-                <button className="btn btn-dark" onClick={handleLogout}>
+                <button className="btn btn-danger" onClick={handleLogout}>
                   Logout
                 </button>
               </div>
