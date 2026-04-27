@@ -78,8 +78,16 @@ export const resolveFoodImage = (imageValue = "") => {
     .replace(/\.[a-z0-9]+$/i, "")
     .replace(/[^a-z]/g, "");
 
+  const normalizedWithoutImagesPrefix = normalized.startsWith("images")
+    ? normalized.slice("images".length)
+    : normalized;
+
   if (KEYWORD_IMAGE_MAP[normalized]) {
     return KEYWORD_IMAGE_MAP[normalized];
+  }
+
+  if (KEYWORD_IMAGE_MAP[normalizedWithoutImagesPrefix]) {
+    return KEYWORD_IMAGE_MAP[normalizedWithoutImagesPrefix];
   }
 
   return FALLBACK_FOOD_IMAGE;
