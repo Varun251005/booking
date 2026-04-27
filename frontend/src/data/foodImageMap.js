@@ -1,3 +1,18 @@
+import biryaniImage from "../assets/Biryani.jpg";
+import dosaImage from "../assets/Dosa.jpg";
+import idliImage from "../assets/idli.jpg";
+import burgerImage from "../assets/burger.jpg";
+import pizzaImage from "../assets/pizza.jpg";
+import cakeImage from "../assets/cake.jpg";
+import coffeeImage from "../assets/coffee.jpg";
+import teaImage from "../assets/tea.jpg";
+import cupcakeImage from "../assets/cupcake.jpg";
+import cupiceImage from "../assets/cupice.jpg";
+import chickenImage from "../assets/chicken.jpg";
+import strawberryCakeImage from "../assets/straberry cake.jpg";
+import iceCreamImage from "../assets/ice cream.jpg";
+import iceCreamAltImage from "../assets/icecreame.jpg";
+
 const DEFAULT_BACKEND_ORIGIN = "http://localhost:5000";
 const API_BASE_URL = import.meta.env.VITE_API_URL || `${DEFAULT_BACKEND_ORIGIN}/api`;
 const BACKEND_ORIGIN = (() => {
@@ -13,32 +28,37 @@ export const FALLBACK_FOOD_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent
 )}`;
 
 const KEYWORD_IMAGE_MAP = {
-  idli: "/images/idli.jpg",
-  dosa: "/images/Dosa.jpg",
-  biryani: "/images/Biryani.jpg",
-  burger: "/images/burger.jpg",
-  pizza: "/images/pizza.jpg",
-  cake: "/images/cake.jpg",
-  coffee: "/images/coffee.jpg",
-  tea: "/images/tea.jpg",
-  cupcake: "/images/cupcake.jpg",
+  idli: idliImage,
+  dosa: dosaImage,
+  biryani: biryaniImage,
+  burger: burgerImage,
+  pizza: pizzaImage,
+  cake: cakeImage,
+  coffee: coffeeImage,
+  tea: teaImage,
+  cupcake: cupcakeImage,
+  cupice: cupiceImage,
+  chicken: chickenImage,
+  strawberrycake: strawberryCakeImage,
+  icecream: iceCreamImage,
+  icecreame: iceCreamAltImage,
 };
 
 const FILE_NAME_IMAGE_MAP = {
-  "idli.jpg": "/images/idli.jpg",
-  "dosa.jpg": "/images/Dosa.jpg",
-  "biryani.jpg": "/images/Biryani.jpg",
-  "burger.jpg": "/images/burger.jpg",
-  "pizza.jpg": "/images/pizza.jpg",
-  "cake.jpg": "/images/cake.jpg",
-  "coffee.jpg": "/images/coffee.jpg",
-  "tea.jpg": "/images/tea.jpg",
-  "cupcake.jpg": "/images/cupcake.jpg",
-  "cupice.jpg": "/images/cupice.jpg",
-  "chicken.jpg": "/images/chicken.jpg",
-  "straberry cake.jpg": "/images/straberry cake.jpg",
-  "ice cream.jpg": "/images/ice cream.jpg",
-  "icecreame.jpg": "/images/icecreame.jpg",
+  "idli.jpg": idliImage,
+  "dosa.jpg": dosaImage,
+  "biryani.jpg": biryaniImage,
+  "burger.jpg": burgerImage,
+  "pizza.jpg": pizzaImage,
+  "cake.jpg": cakeImage,
+  "coffee.jpg": coffeeImage,
+  "tea.jpg": teaImage,
+  "cupcake.jpg": cupcakeImage,
+  "cupice.jpg": cupiceImage,
+  "chicken.jpg": chickenImage,
+  "straberry cake.jpg": strawberryCakeImage,
+  "ice cream.jpg": iceCreamImage,
+  "icecreame.jpg": iceCreamAltImage,
 };
 
 export const resolveFoodImage = (imageValue = "") => {
@@ -61,7 +81,12 @@ export const resolveFoodImage = (imageValue = "") => {
     return `${BACKEND_ORIGIN}/${rawValue}`;
   }
 
-  if (lowerValue.startsWith("/images/") || lowerValue.startsWith("/")) {
+  if (lowerValue.startsWith("/images/")) {
+    const fileName = lowerValue.split("/").pop() || "";
+    return FILE_NAME_IMAGE_MAP[fileName] ?? rawValue;
+  }
+
+  if (lowerValue.startsWith("/")) {
     return rawValue;
   }
 

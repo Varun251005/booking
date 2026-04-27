@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import API from "../../services/api";
+import { resolveFoodImage } from "../../data/foodImageMap";
 
 const IMAGE_OPTIONS = [
   { label: "Burger", value: "/images/burger.jpg" },
@@ -72,7 +73,7 @@ const AddFood = () => {
         </Form.Select>
 
         {food.image ? (
-          <img src={food.image} alt="preview" className="food-preview mb-2" />
+          <img src={resolveFoodImage(food.image)} alt="preview" className="food-preview mb-2" />
         ) : null}
 
         <Form.Control

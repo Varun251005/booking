@@ -1,9 +1,12 @@
 import { Carousel } from "react-bootstrap";
+import offer1 from "../assets/1.png";
+import offer2 from "../assets/2.png";
+import offer3 from "../assets/3.png";
 
 const offerSlides = [
-  "/images/1.png",
-  "/images/2.png",
-  "/images/3.png",
+  offer1,
+  offer2,
+  offer3,
 ];
 
 const OfferSlider = () => {
