@@ -1,9 +1,9 @@
 import { Carousel } from "react-bootstrap";
 
 const offerSlides = [
-  "http://localhost:5000/uploads/foods/1777125022861-coffee.jpg",
-  "http://localhost:5000/uploads/foods/1777125052806-pizza.jpg",
-  "http://localhost:5000/uploads/foods/1777125080856-tea.jpg",
+  "/images/1.png",
+  "/images/2.png",
+  "/images/3.png",
 ];
 
 const OfferSlider = () => {

@@ -1,34 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import API from "../../services/api";
-import { resolveFoodImage } from "../../data/foodImageMap";
+
+const IMAGE_OPTIONS = [
+  { label: "Burger", value: "/images/burger.jpg" },
+  { label: "Pizza", value: "/images/pizza.jpg" },
+  { label: "Cake", value: "/images/cake.jpg" },
+  { label: "Coffee", value: "/images/coffee.jpg" },
+  { label: "Tea", value: "/images/tea.jpg" },
+  { label: "Cupcake", value: "/images/cupcake.jpg" },
+  { label: "Idli", value: "/images/idli.jpg" },
+  { label: "Dosa", value: "/images/Dosa.jpg" },
+  { label: "Biryani", value: "/images/Biryani.jpg" },
+];
 
 const AddFood = () => {
   const [food, setFood] = useState({ name: "", price: "", image: "", category: "" });
-  const [savedImages, setSavedImages] = useState([]);
-  const [loadingImages, setLoadingImages] = useState(true);
 
   const handleChange = (e) => setFood({ ...food, [e.target.name]: e.target.value });
-
-  useEffect(() => {
-    const loadSavedImages = async () => {
-      try {
-        const response = await API.get("/foods/saved-images");
-        setSavedImages(response.data ?? []);
-      } catch {
-        setSavedImages([]);
-      } finally {
-        setLoadingImages(false);
-      }
-    };
-
-    loadSavedImages();
-  }, []);
-
-  const imagePreviewSrc = useMemo(() => {
-    if (!food.image) return "";
-    return resolveFoodImage(food.image);
-  }, [food.image]);
 
   const handleSubmit = async () => {
     if (!food.image) {
@@ -73,18 +62,17 @@ const AddFood = () => {
           value={food.image}
           onChange={handleChange}
           className="mb-2"
-          disabled={loadingImages}
         >
-          <option value="">{loadingImages ? "Loading saved images..." : "Select saved image"}</option>
-          {savedImages.map((imageOption) => (
+          <option value="">Select saved image</option>
+          {IMAGE_OPTIONS.map((imageOption) => (
             <option key={imageOption.value} value={imageOption.value}>
-              {imageOption.name}
+              {imageOption.label}
             </option>
           ))}
         </Form.Select>
 
-        {imagePreviewSrc ? (
-          <img src={imagePreviewSrc} alt="preview" className="food-preview mb-2" />
+        {food.image ? (
+          <img src={food.image} alt="preview" className="food-preview mb-2" />
         ) : null}
 
         <Form.Control
