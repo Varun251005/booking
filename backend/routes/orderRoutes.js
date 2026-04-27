@@ -30,6 +30,7 @@ const normalizeOrderItems = (items = []) =>
 router.post("/", async (req, res) => {
   const normalizedItems = normalizeOrderItems(req.body.items);
   const tableNumber = Number(req.body.tableNumber);
+  const deviceId = req.body.deviceId && String(req.body.deviceId);
   const paymentStatus = req.body.paymentStatus || "pending";
 
   if (!normalizedItems.length) {
@@ -38,6 +39,10 @@ router.post("/", async (req, res) => {
 
   if (!tableNumber) {
     return res.status(400).json({ message: "Table number is required" });
+  }
+
+  if (!deviceId) {
+    return res.status(400).json({ message: "deviceId is required" });
   }
 
   if (!validPaymentStatuses.includes(paymentStatus)) {
@@ -55,6 +60,7 @@ router.post("/", async (req, res) => {
     totalPrice: Number(req.body.totalPrice) || totalPriceFromItems,
     tableNumber,
     paymentStatus,
+    deviceId,
   };
 
   if (!isDatabaseConnected()) {
@@ -80,6 +86,19 @@ router.get("/", async (req, res) => {
   }
 
   const orders = await Order.find();
+  res.json(orders);
+});
+
+// GET ORDERS FOR DEVICE
+router.get("/:deviceId", async (req, res) => {
+  const deviceIdParam = req.params.deviceId;
+
+  if (!isDatabaseConnected()) {
+    const filtered = inMemoryOrders.filter((o) => o.deviceId === deviceIdParam);
+    return res.json(filtered);
+  }
+
+  const orders = await Order.find({ deviceId: deviceIdParam });
   res.json(orders);
 });
 

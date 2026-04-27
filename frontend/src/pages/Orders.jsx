@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Container, ListGroup } from "react-bootstrap";
 import API from "../services/api";
+import getDeviceId from "../utils/device";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await API.get("/orders");
+      const deviceId = getDeviceId();
+      const res = await API.get(`/orders/${deviceId}`);
       setOrders(res.data);
     };
     fetch();

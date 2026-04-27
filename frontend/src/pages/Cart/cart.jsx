@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert, Button, Container, Form, ListGroup } from "react-bootstrap";
 import { useCart } from "../../context/CartContext";
 import API from "../../services/api";
+import getDeviceId from "../../utils/device";
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCart();
@@ -24,15 +25,18 @@ const Cart = () => {
 
     try {
       setErrorMessage("");
+      const deviceId = getDeviceId();
+
       await API.post("/orders", {
-        items: cart.map(item => ({
+        items: cart.map((item) => ({
           foodId: getItemId(item),
           foodName: item.name,
           price: item.price,
-          quantity: item.quantity
+          quantity: item.quantity,
         })),
         totalPrice: total,
-        tableNumber: Number(tableNumber)
+        tableNumber: Number(tableNumber),
+        deviceId,
       });
 
       setSuccessMessage("Order placed successfully");
