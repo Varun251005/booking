@@ -1,9 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
 import Food from "../models/Food.js";
 import defaultFoods from "../data/defaultFoods.js";
 
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsFoodsDir = path.join(__dirname, "..", "uploads", "foods");
 
 const normalizeImageValue = (value = "") =>
   value
@@ -19,6 +26,27 @@ const inMemoryFoods = defaultFoods.map((food, index) => ({
   _id: `local-food-${index + 1}`,
   ...food,
 }));
+
+router.get("/saved-images", async (req, res) => {
+  try {
+    const files = await fs.readdir(uploadsFoodsDir, { withFileTypes: true });
+    const imageFiles = files
+      .filter(
+        (file) =>
+          file.isFile() &&
+          /\.(png|jpe?g|webp|gif|svg)$/i.test(file.name)
+      )
+      .map((file) => ({
+        name: file.name,
+        value: `/uploads/foods/${file.name}`,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return res.json(imageFiles);
+  } catch {
+    return res.json([]);
+  }
+});
 
 // GET ALL FOOD
 router.get("/", async (req, res) => {

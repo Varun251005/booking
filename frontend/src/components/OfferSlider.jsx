@@ -1,34 +1,23 @@
 import { Carousel } from "react-bootstrap";
-import offer1 from "../assets/1.png";
-import offer2 from "../assets/2.png";
-import offer3 from "../assets/3.png";
+
+const offerSlides = [
+  "http://localhost:5000/uploads/foods/1777125022861-coffee.jpg",
+  "http://localhost:5000/uploads/foods/1777125052806-pizza.jpg",
+  "http://localhost:5000/uploads/foods/1777125080856-tea.jpg",
+];
 
 const OfferSlider = () => {
   return (
     <Carousel controls={false} indicators interval={2000} className="offer-carousel">
-      <Carousel.Item>
-        <img
-          className="d-block w-100 offer-image"
-          src={offer1}
-          alt="Offer 1"
-        />
-      </Carousel.Item>
-
-      <Carousel.Item>
-        <img
-          className="d-block w-100 offer-image"
-          src={offer2}
-          alt="Offer 2"
-        />
-      </Carousel.Item>
-
-      <Carousel.Item>
-        <img
-          className="d-block w-100 offer-image"
-          src={offer3}
-          alt="Offer 3"
-        />
-      </Carousel.Item>
+      {offerSlides.map((slide, index) => (
+        <Carousel.Item key={slide}>
+          <img
+            className="d-block w-100 offer-image"
+            src={slide}
+            alt={`Offer ${index + 1}`}
+          />
+        </Carousel.Item>
+      ))}
     </Carousel>
   );
 };

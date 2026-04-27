@@ -1,13 +1,41 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import API from "../../services/api";
+import { resolveFoodImage } from "../../data/foodImageMap";
 
 const AddFood = () => {
   const [food, setFood] = useState({ name: "", price: "", image: "", category: "" });
+  const [savedImages, setSavedImages] = useState([]);
+  const [loadingImages, setLoadingImages] = useState(true);
 
   const handleChange = (e) => setFood({ ...food, [e.target.name]: e.target.value });
 
+  useEffect(() => {
+    const loadSavedImages = async () => {
+      try {
+        const response = await API.get("/foods/saved-images");
+        setSavedImages(response.data ?? []);
+      } catch {
+        setSavedImages([]);
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    loadSavedImages();
+  }, []);
+
+  const imagePreviewSrc = useMemo(() => {
+    if (!food.image) return "";
+    return resolveFoodImage(food.image);
+  }, [food.image]);
+
   const handleSubmit = async () => {
+    if (!food.image) {
+      alert("Please select an image");
+      return;
+    }
+
     try {
       await API.post("/foods", food);
       alert("Food added!");
@@ -40,16 +68,23 @@ const AddFood = () => {
           className="mb-2"
         />
 
-        <Form.Control
+        <Form.Select
           name="image"
-          placeholder="Image URL (e.g. /images/burger.png)"
           value={food.image}
           onChange={handleChange}
           className="mb-2"
-        />
+          disabled={loadingImages}
+        >
+          <option value="">{loadingImages ? "Loading saved images..." : "Select saved image"}</option>
+          {savedImages.map((imageOption) => (
+            <option key={imageOption.value} value={imageOption.value}>
+              {imageOption.name}
+            </option>
+          ))}
+        </Form.Select>
 
-        {food.image ? (
-          <img src={food.image} alt="preview" className="food-preview mb-2" />
+        {imagePreviewSrc ? (
+          <img src={imagePreviewSrc} alt="preview" className="food-preview mb-2" />
         ) : null}
 
         <Form.Control

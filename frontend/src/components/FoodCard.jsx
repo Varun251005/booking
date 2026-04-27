@@ -1,9 +1,18 @@
 import { Card, Button } from "react-bootstrap";
+import { FALLBACK_FOOD_IMAGE } from "../data/foodImageMap";
 
 const FoodCard = ({ food, onAdd }) => {
   return (
     <Card className="food-card">
-      <Card.Img variant="top" src={food.image} alt={food.name} className="food-image" />
+      <Card.Img
+        variant="top"
+        src={food.image || FALLBACK_FOOD_IMAGE}
+        alt={food.name}
+        className="food-image"
+        onError={(event) => {
+          event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+        }}
+      />
       <Card.Body>
         <div className="food-meta-row">
           <Card.Title className="food-title">{food.name}</Card.Title>
