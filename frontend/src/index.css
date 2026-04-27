@@ -327,16 +327,16 @@ body {
 .theme-btn,
 .theme-btn-sm {
   border-radius: 999px;
-  background: #181716;
-  border: 1px solid #181716;
+  background: #000000;
+  border: 1px solid #000000;
   color: #f8f5f3;
   font-weight: 700;
 }
 
 .theme-btn:hover,
 .theme-btn-sm:hover {
-  background: #070706;
-  border-color: #070706;
+  background: #111111;
+  border-color: #111111;
   color: #f8f5f3;
 }
 
@@ -345,12 +345,14 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(23, 22, 21, 0.25);
 }
 
-.btn-dark:hover {
-  background-color: #222 !important;
+.btn-dark {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
 }
 
-.btn-danger:hover {
-  background-color: #c82333 !important;
+.btn-dark:hover {
+  background-color: #111111 !important;
+  border-color: #111111 !important;
 }
 
 .admin-nav-actions .btn {

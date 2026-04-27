@@ -67,8 +67,7 @@ const AdminFoods = () => {
                 <td>{food.category || "-"}</td>
                 <td>
                   <Button
-                    variant="danger"
-                    size="sm"
+                    className="theme-btn-sm"
                     onClick={() => handleDelete(food._id ?? food.id)}
                   >
                     Delete
