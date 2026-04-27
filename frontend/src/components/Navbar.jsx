@@ -6,6 +6,13 @@ import { useCart } from "../context/CartContext";
 const AppNavbar = () => {
   const { cart } = useCart();
   const role = localStorage.getItem("role");
+  const storedName =
+    localStorage.getItem("userName") ||
+    localStorage.getItem("name") ||
+    localStorage.getItem("email") ||
+    localStorage.getItem("userEmail") ||
+    "";
+  const displayName = storedName ? storedName.split("@")[0] : "Guest";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -23,13 +30,19 @@ const AppNavbar = () => {
           <Nav className="ms-auto nav-links">
             {role !== "admin" && (
               <>
+                <span className="navbar-user-name" title={storedName || "Guest"}>
+                  Hi, {displayName}
+                </span>
                 <Nav.Link as={Link} to="/" aria-label="Home" title="Home">
+                  <span className="me-2">Home</span>
                   <FaHome size={20} />
                 </Nav.Link>
                 <Nav.Link as={Link} to="/orders" aria-label="Orders" title="Orders">
+                  <span className="me-2">My Orders</span>
                   <FaListAlt size={20} />
                 </Nav.Link>
                 <Nav.Link as={Link} to="/cart">
+                  <span className="me-2">Cart ({cart.length})</span>
                   <span aria-label={`Cart (${cart.length})`} title={`Cart (${cart.length})`}>
                     <FaShoppingCart size={20} />
                   </span>

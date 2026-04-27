@@ -363,6 +363,17 @@ body {
   gap: 8px;
 }
 
+.navbar-user-name {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1f1e1d;
+}
+
 @media (max-width: 576px) {
   .offer-carousel .carousel-item {
     height: 220px;
@@ -376,6 +387,11 @@ body {
     width: 100%;
     gap: 10px;
     padding-top: 10px;
+  }
+
+  .navbar-user-name {
+    width: 100%;
+    justify-content: center;
   }
 
   .app-navbar .nav-link {
