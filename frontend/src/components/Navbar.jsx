@@ -1,5 +1,6 @@
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { FaHome, FaShoppingCart, FaListAlt } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 
 const AppNavbar = () => {
@@ -22,10 +23,16 @@ const AppNavbar = () => {
           <Nav className="ms-auto nav-links">
             {role !== "admin" && (
               <>
-                <Nav.Link as={Link} to="/">Home</Nav.Link>
-                <Nav.Link as={Link} to="/orders">My Orders</Nav.Link>
+                <Nav.Link as={Link} to="/" aria-label="Home" title="Home">
+                  <FaHome size={20} />
+                </Nav.Link>
+                <Nav.Link as={Link} to="/orders" aria-label="Orders" title="Orders">
+                  <FaListAlt size={20} />
+                </Nav.Link>
                 <Nav.Link as={Link} to="/cart">
-                  Cart ({cart.length})
+                  <span aria-label={`Cart (${cart.length})`} title={`Cart (${cart.length})`}>
+                    <FaShoppingCart size={20} />
+                  </span>
                 </Nav.Link>
               </>
             )}
