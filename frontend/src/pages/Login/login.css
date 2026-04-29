@@ -3,17 +3,18 @@
   justify-content: center;
   align-items: center;
   min-height: 90vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e8dcc8 0%, #f5f1e8 100%);
 }
 
 .login-box {
-  background-color: white;
+  background-color: #f5f1e8;
   border-radius: 12px;
   padding: 40px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 400px;
   animation: slideIn 0.5s ease-out;
+  border: 2px solid #e8dcc8;
 }
 
 @keyframes slideIn {
@@ -57,22 +58,24 @@
 }
 
 .login-box .form-control:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  border-color: #1a1a1a;
+  box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.25);
 }
 
 .login-box .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #1a1a1a;
   border: none;
   padding: 10px;
   font-weight: 600;
   border-radius: 8px;
   transition: all 0.3s ease;
+  color: white;
 }
 
 .login-box .btn-primary:hover {
+  background-color: #333;
   transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 20px rgba(26, 26, 26, 0.4);
 }
 
 .login-box .alert {
