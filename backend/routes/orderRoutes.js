@@ -30,6 +30,7 @@ const normalizeOrderItems = (items = []) =>
 router.post("/", async (req, res) => {
   const normalizedItems = normalizeOrderItems(req.body.items);
   const tableNumber = Number(req.body.tableNumber);
+  const name = req.body.name && String(req.body.name).trim();
   const deviceId = req.body.deviceId && String(req.body.deviceId);
   const paymentStatus = req.body.paymentStatus || "pending";
 
@@ -39,6 +40,10 @@ router.post("/", async (req, res) => {
 
   if (!tableNumber) {
     return res.status(400).json({ message: "Table number is required" });
+  }
+
+  if (!name) {
+    return res.status(400).json({ message: "Name is required" });
   }
 
   if (!deviceId) {
@@ -59,6 +64,7 @@ router.post("/", async (req, res) => {
     items: normalizedItems,
     totalPrice: Number(req.body.totalPrice) || totalPriceFromItems,
     tableNumber,
+    name,
     paymentStatus,
     deviceId,
   };
@@ -79,12 +85,31 @@ router.post("/", async (req, res) => {
   return res.json(order);
 });
 
-// GET ALL ORDERS
+// GET ALL ORDERS (or filter by name and table if provided)
 router.get("/", async (req, res) => {
+  const { name, table } = req.query;
+
   if (!isDatabaseConnected()) {
+    // If name and table are provided, filter in-memory orders
+    if (name && table) {
+      const filtered = inMemoryOrders.filter(
+        (o) => o.name === name && o.tableNumber === Number(table)
+      );
+      return res.json(filtered);
+    }
     return res.json(inMemoryOrders);
   }
 
+  // If name and table are provided, filter database orders
+  if (name && table) {
+    const orders = await Order.find({
+      name,
+      tableNumber: Number(table),
+    });
+    return res.json(orders);
+  }
+
+  // Return all orders if no filters provided
   const orders = await Order.find();
   res.json(orders);
 });

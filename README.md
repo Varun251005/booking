@@ -18,6 +18,7 @@ It also includes an admin panel to manage food items and orders.
 * Browse food items
 * Add to cart
 * View orders
+* Enter name and table number
 
 ### 🔐 Admin
 
