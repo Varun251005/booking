@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, ListGroup, Alert, Badge, Spinner } from "react-bootstrap";
 import API from "../services/api";
+import getDeviceId from "../utils/device";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -22,8 +23,14 @@ const Orders = () => {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
 
-        // Fetch orders filtered by name and table
-        const res = await API.get(`/orders?name=${parsedUser.name}&table=${parsedUser.table}`);
+        // Fetch orders filtered by name, table, and device
+        const deviceId = getDeviceId();
+        const params = new URLSearchParams({
+          name: parsedUser.name,
+          table: parsedUser.table,
+          deviceId,
+        });
+        const res = await API.get(`/orders?${params.toString()}`);
         setOrders(res.data);
         setError("");
       } catch (err) {
