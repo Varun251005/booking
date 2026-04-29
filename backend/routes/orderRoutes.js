@@ -87,30 +87,39 @@ router.post("/", async (req, res) => {
 
 // GET ALL ORDERS (or filter by name and table if provided)
 router.get("/", async (req, res) => {
-  const { name, table } = req.query;
+  const { name, table, deviceId } = req.query;
+  const tableNumber = table !== undefined ? Number(table) : undefined;
+  const deviceIdValue = deviceId ? String(deviceId) : undefined;
+
+  if (table !== undefined && Number.isNaN(tableNumber)) {
+    return res.status(400).json({ message: "Table must be a valid number" });
+  }
 
   if (!isDatabaseConnected()) {
-    // If name and table are provided, filter in-memory orders
-    if (name && table) {
-      const filtered = inMemoryOrders.filter(
-        (o) => o.name === name && o.tableNumber === Number(table)
-      );
+    if (name || table !== undefined || deviceIdValue) {
+      const filtered = inMemoryOrders.filter((order) => {
+        if (name && order.name !== name) return false;
+        if (table !== undefined && order.tableNumber !== tableNumber) return false;
+        if (deviceIdValue && order.deviceId !== deviceIdValue) return false;
+        return true;
+      });
       return res.json(filtered);
     }
     return res.json(inMemoryOrders);
   }
 
-  // If name and table are provided, filter database orders
-  if (name && table) {
-    const orders = await Order.find({
-      name,
-      tableNumber: Number(table),
-    });
-    return res.json(orders);
+  const query = {};
+  if (name) {
+    query.name = name;
+  }
+  if (table !== undefined) {
+    query.tableNumber = tableNumber;
+  }
+  if (deviceIdValue) {
+    query.deviceId = deviceIdValue;
   }
 
-  // Return all orders if no filters provided
-  const orders = await Order.find();
+  const orders = Object.keys(query).length ? await Order.find(query) : await Order.find();
   res.json(orders);
 });
 
