@@ -58,7 +58,7 @@ function Login() {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="w-100">
+          <Button variant="dark" type="submit" className="w-100">
             Enter
           </Button>
         </Form>
