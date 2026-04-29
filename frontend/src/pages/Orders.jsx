@@ -1,31 +1,103 @@
 import { useEffect, useState } from "react";
-import { Container, ListGroup } from "react-bootstrap";
+import { Container, ListGroup, Alert, Badge, Spinner } from "react-bootstrap";
 import API from "../services/api";
-import getDeviceId from "../utils/device";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetch = async () => {
-      const deviceId = getDeviceId();
-      const res = await API.get(`/orders/${deviceId}`);
-      setOrders(res.data);
+    const fetchUserOrders = async () => {
+      try {
+        // Get user data from localStorage
+        const userData = localStorage.getItem("user");
+        if (!userData) {
+          setError("User information not found. Please login again.");
+          setLoading(false);
+          return;
+        }
+
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+
+        // Fetch orders filtered by name and table
+        const res = await API.get(`/orders?name=${parsedUser.name}&table=${parsedUser.table}`);
+        setOrders(res.data);
+        setError("");
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+        setError(err.response?.data?.message || "Error fetching orders");
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
     };
-    fetch();
+
+    fetchUserOrders();
   }, []);
+
+  const getStatusColor = (status) => {
+    const colors = {
+      pending: "warning",
+      preparing: "info",
+      ready: "success",
+      completed: "success",
+      cancelled: "danger",
+    };
+    return colors[status] || "secondary";
+  };
 
   return (
     <Container className="mt-4 page-shell">
-      <h2 className="page-title">Your Orders</h2>
+      <h2 className="page-title">My Orders</h2>
 
-      <ListGroup>
-        {orders.map(order => (
-          <ListGroup.Item key={order._id} className="cart-item">
-            ₹{order.totalPrice} - {order.status}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+      {user && (
+        <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+          <p><strong>Name:</strong> {user.name}</p>
+          <p><strong>Table:</strong> {user.table}</p>
+        </div>
+      )}
+
+      {error && <Alert variant="danger">{error}</Alert>}
+
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "40px" }}>
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : orders.length === 0 ? (
+        <Alert variant="info">No orders found for your account</Alert>
+      ) : (
+        <ListGroup>
+          {orders.map((order) => (
+            <ListGroup.Item key={order._id} className="cart-item">
+              <div style={{ marginBottom: "10px" }}>
+                <h5>Order #{order._id.slice(-6).toUpperCase()}</h5>
+                <Badge bg={getStatusColor(order.status)}>{order.status}</Badge>
+                <Badge bg={getStatusColor(order.paymentStatus)} style={{ marginLeft: "8px" }}>
+                  {order.paymentStatus}
+                </Badge>
+              </div>
+
+              <div style={{ marginBottom: "10px" }}>
+                {order.items?.map((item, idx) => (
+                  <p key={idx} style={{ margin: "5px 0", fontSize: "14px" }}>
+                    {item.foodName} (x{item.quantity}) - ₹{item.price * item.quantity}
+                  </p>
+                ))}
+              </div>
+
+              <h5>Total: ₹{order.totalPrice}</h5>
+              <small style={{ color: "#666" }}>
+                {new Date(order.createdAt).toLocaleString()}
+              </small>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      )}
     </Container>
   );
 };
