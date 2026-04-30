@@ -23,10 +23,15 @@ const Orders = () => {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
 
-        // Fetch orders filtered by name, table, and device
+        if (!parsedUser.table) {
+          setError("Table number is missing. Please login again.");
+          setLoading(false);
+          return;
+        }
+
+        // Fetch orders filtered by table and device for this session
         const deviceId = getDeviceId();
         const params = new URLSearchParams({
-          name: parsedUser.name,
           table: parsedUser.table,
           deviceId,
         });
