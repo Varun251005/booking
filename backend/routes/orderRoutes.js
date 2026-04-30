@@ -32,6 +32,7 @@ router.post("/", async (req, res) => {
   const tableNumber = Number(req.body.tableNumber);
   const name = req.body.name && String(req.body.name).trim();
   const deviceId = req.body.deviceId && String(req.body.deviceId);
+  const sessionId = req.body.sessionId && String(req.body.sessionId);
   const paymentStatus = req.body.paymentStatus || "pending";
 
   if (!normalizedItems.length) {
@@ -48,6 +49,10 @@ router.post("/", async (req, res) => {
 
   if (!deviceId) {
     return res.status(400).json({ message: "deviceId is required" });
+  }
+
+  if (!sessionId) {
+    return res.status(400).json({ message: "sessionId is required" });
   }
 
   if (!validPaymentStatuses.includes(paymentStatus)) {
@@ -67,6 +72,7 @@ router.post("/", async (req, res) => {
     name,
     paymentStatus,
     deviceId,
+    sessionId,
   };
 
   if (!isDatabaseConnected()) {
@@ -87,20 +93,22 @@ router.post("/", async (req, res) => {
 
 // GET ALL ORDERS (or filter by name and table if provided)
 router.get("/", async (req, res) => {
-  const { name, table, deviceId } = req.query;
+  const { name, table, deviceId, sessionId } = req.query;
   const tableNumber = table !== undefined ? Number(table) : undefined;
   const deviceIdValue = deviceId ? String(deviceId) : undefined;
+  const sessionIdValue = sessionId ? String(sessionId) : undefined;
 
   if (table !== undefined && Number.isNaN(tableNumber)) {
     return res.status(400).json({ message: "Table must be a valid number" });
   }
 
   if (!isDatabaseConnected()) {
-    if (name || table !== undefined || deviceIdValue) {
+    if (name || table !== undefined || deviceIdValue || sessionIdValue) {
       const filtered = inMemoryOrders.filter((order) => {
         if (name && order.name !== name) return false;
         if (table !== undefined && order.tableNumber !== tableNumber) return false;
         if (deviceIdValue && order.deviceId !== deviceIdValue) return false;
+        if (sessionIdValue && order.sessionId !== sessionIdValue) return false;
         return true;
       });
       return res.json(filtered);
@@ -117,6 +125,9 @@ router.get("/", async (req, res) => {
   }
   if (deviceIdValue) {
     query.deviceId = deviceIdValue;
+  }
+  if (sessionIdValue) {
+    query.sessionId = sessionIdValue;
   }
 
   const orders = Object.keys(query).length ? await Order.find(query) : await Order.find();

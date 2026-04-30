@@ -29,6 +29,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  sessionId: {
+    type: String,
+    required: true,
+  },
   paymentStatus: {
     type: String,
     enum: ["pending", "paid"],
