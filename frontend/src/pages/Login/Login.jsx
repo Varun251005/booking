@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import "./login.css";
+import getDeviceId from "../../utils/device";
 
 function Login() {
   const [name, setName] = useState("");
@@ -18,6 +19,8 @@ function Login() {
     }
 
     try {
+      localStorage.removeItem("deviceId");
+      getDeviceId();
       localStorage.setItem("user", JSON.stringify({ name: name.trim(), table: table.trim() }));
       setError("");
       navigate("/");
