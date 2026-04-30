@@ -30,6 +30,7 @@ const AppNavbar = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("userRole");
     localStorage.removeItem("deviceId");
+    localStorage.removeItem("sessionId");
     navigate("/login");
   };
 

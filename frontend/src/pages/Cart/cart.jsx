@@ -3,6 +3,7 @@ import { Alert, Button, Container, Form, ListGroup } from "react-bootstrap";
 import { useCart } from "../../context/CartContext";
 import API from "../../services/api";
 import getDeviceId from "../../utils/device";
+import getSessionId from "../../utils/session";
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCart();
@@ -36,6 +37,7 @@ const Cart = () => {
       setErrorMessage("");
       setIsPlacing(true);
       const deviceId = getDeviceId();
+      const sessionId = getSessionId();
 
       await API.post("/orders", {
         items: cart.map((item) => ({
@@ -48,6 +50,7 @@ const Cart = () => {
         tableNumber: Number(user.table),
         name: user.name,
         deviceId,
+        sessionId,
       });
 
       setSuccessMessage("Order placed successfully!");
