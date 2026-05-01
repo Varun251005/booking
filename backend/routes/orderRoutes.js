@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import Order from "../models/Order.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -26,33 +27,18 @@ const normalizeOrderItems = (items = []) =>
     })
     .filter(Boolean);
 
-// CREATE ORDER
-router.post("/", async (req, res) => {
+// CREATE ORDER (logged-in user)
+router.post("/", auth, async (req, res) => {
   const normalizedItems = normalizeOrderItems(req.body.items);
-  const tableNumber = Number(req.body.tableNumber);
-  const name = req.body.name && String(req.body.name).trim();
-  const deviceId = req.body.deviceId && String(req.body.deviceId);
-  const sessionId = req.body.sessionId && String(req.body.sessionId);
+  const totalPriceInput = Number(req.body.totalPrice);
+  const tableNumber = req.body.tableNumber !== undefined ? Number(req.body.tableNumber) : undefined;
+  const name = req.body.name ? String(req.body.name).trim() : undefined;
+  const deviceId = req.body.deviceId ? String(req.body.deviceId) : undefined;
+  const sessionId = req.body.sessionId ? String(req.body.sessionId) : undefined;
   const paymentStatus = req.body.paymentStatus || "pending";
 
   if (!normalizedItems.length) {
     return res.status(400).json({ message: "Order must include valid food items" });
-  }
-
-  if (!tableNumber) {
-    return res.status(400).json({ message: "Table number is required" });
-  }
-
-  if (!name) {
-    return res.status(400).json({ message: "Name is required" });
-  }
-
-  if (!deviceId) {
-    return res.status(400).json({ message: "deviceId is required" });
-  }
-
-  if (!sessionId) {
-    return res.status(400).json({ message: "sessionId is required" });
   }
 
   if (!validPaymentStatuses.includes(paymentStatus)) {
@@ -65,15 +51,17 @@ router.post("/", async (req, res) => {
   );
 
   const payload = {
-    ...req.body,
+    userId: req.user.id,
+    email: req.user.email,
     items: normalizedItems,
-    totalPrice: Number(req.body.totalPrice) || totalPriceFromItems,
-    tableNumber,
-    name,
+    totalPrice: totalPriceInput || totalPriceFromItems,
     paymentStatus,
-    deviceId,
-    sessionId,
   };
+
+  if (tableNumber !== undefined && !Number.isNaN(tableNumber)) payload.tableNumber = tableNumber;
+  if (name) payload.name = name;
+  if (deviceId) payload.deviceId = deviceId;
+  if (sessionId) payload.sessionId = sessionId;
 
   if (!isDatabaseConnected()) {
     const localOrder = {
@@ -91,8 +79,12 @@ router.post("/", async (req, res) => {
   return res.json(order);
 });
 
-// GET ALL ORDERS (or filter by name and table if provided)
-router.get("/", async (req, res) => {
+// GET ALL ORDERS (admin only)
+router.get("/", auth, async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied" });
+  }
+
   const { name, table, deviceId, sessionId } = req.query;
   const tableNumber = table !== undefined ? Number(table) : undefined;
   const deviceIdValue = deviceId ? String(deviceId) : undefined;
@@ -134,20 +126,24 @@ router.get("/", async (req, res) => {
   res.json(orders);
 });
 
-// GET ORDERS FOR DEVICE
-router.get("/:deviceId", async (req, res) => {
-  const deviceIdParam = req.params.deviceId;
+// GET LOGGED-IN USER ORDERS
+router.get("/my", auth, async (req, res) => {
+  const userId = req.user.id;
 
   if (!isDatabaseConnected()) {
-    const filtered = inMemoryOrders.filter((o) => o.deviceId === deviceIdParam);
+    const filtered = inMemoryOrders.filter((o) => String(o.userId) === String(userId));
     return res.json(filtered);
   }
 
-  const orders = await Order.find({ deviceId: deviceIdParam });
+  const orders = await Order.find({ userId }).sort({ createdAt: -1 });
   res.json(orders);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied" });
+  }
+
   const updates = {};
 
   if (req.body.status) {
