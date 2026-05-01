@@ -1,7 +1,15 @@
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
-  userId: mongoose.Schema.Types.ObjectId,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
   items: [
     {
       foodId: {
@@ -16,23 +24,14 @@ const orderSchema = new mongoose.Schema({
       }
     }
   ],
-  totalPrice: Number,
-  tableNumber: {
+  totalPrice: {
     type: Number,
     required: true,
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  deviceId: {
-    type: String,
-    required: true,
-  },
-  sessionId: {
-    type: String,
-    required: true,
-  },
+  tableNumber: Number,
+  name: String,
+  deviceId: String,
+  sessionId: String,
   paymentStatus: {
     type: String,
     enum: ["pending", "paid"],
@@ -42,6 +41,6 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: "pending"
   }
-});
+}, { timestamps: true });
 
 export default mongoose.model("Order", orderSchema);
