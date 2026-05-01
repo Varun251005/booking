@@ -13,8 +13,8 @@ import AppNavbar from "./components/Navbar";
 
 // PrivateRoute component - protects routes that require user login
 const PrivateRoute = ({ children }) => {
-  const user = localStorage.getItem("user");
-  return user ? children : <Navigate to="/login" replace />;
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
