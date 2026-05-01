@@ -1,25 +1,14 @@
-import { useState, useEffect } from "react";
-import { Alert, Button, Container, Form, ListGroup } from "react-bootstrap";
+import { useState } from "react";
+import { Alert, Button, Container, ListGroup } from "react-bootstrap";
 import { useCart } from "../../context/CartContext";
 import API from "../../services/api";
-import getDeviceId from "../../utils/device";
-import getSessionId from "../../utils/session";
 
 const Cart = () => {
   const { cart, removeFromCart, increaseQty, decreaseQty } = useCart();
-  const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPlacing, setIsPlacing] = useState(false);
   const getItemId = (item) => item._id ?? item.id;
-
-  useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
 
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -27,17 +16,9 @@ const Cart = () => {
   );
 
   const placeOrder = async () => {
-    if (!user) {
-      setErrorMessage("User information not found. Please login again.");
-      setSuccessMessage("");
-      return;
-    }
-
     try {
       setErrorMessage("");
       setIsPlacing(true);
-      const deviceId = getDeviceId();
-      const sessionId = getSessionId();
 
       await API.post("/orders", {
         items: cart.map((item) => ({
@@ -47,10 +28,6 @@ const Cart = () => {
           quantity: item.quantity,
         })),
         totalPrice: total,
-        tableNumber: Number(user.table),
-        name: user.name,
-        deviceId,
-        sessionId,
       });
 
       setSuccessMessage("Order placed successfully!");
@@ -75,13 +52,6 @@ const Cart = () => {
         <>
           {successMessage && <Alert variant="success">{successMessage}</Alert>}
           {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-
-          {user && (
-            <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
-              <p><strong>Name:</strong> {user.name}</p>
-              <p><strong>Table:</strong> {user.table}</p>
-            </div>
-          )}
 
           <ListGroup>
             {cart.map(item => (

@@ -1,44 +1,16 @@
 import { useEffect, useState } from "react";
 import { Container, ListGroup, Alert, Badge, Spinner } from "react-bootstrap";
 import API from "../services/api";
-import getDeviceId from "../utils/device";
-import getSessionId from "../utils/session";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchUserOrders = async () => {
       try {
-        // Get user data from localStorage
-        const userData = localStorage.getItem("user");
-        if (!userData) {
-          setError("User information not found. Please login again.");
-          setLoading(false);
-          return;
-        }
-
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-
-        if (!parsedUser.table) {
-          setError("Table number is missing. Please login again.");
-          setLoading(false);
-          return;
-        }
-
-        // Fetch orders filtered by table and device for this session
-        const deviceId = getDeviceId();
-        const sessionId = getSessionId();
-        const params = new URLSearchParams({
-          table: parsedUser.table,
-          deviceId,
-          sessionId,
-        });
-        const res = await API.get(`/orders?${params.toString()}`);
+        const res = await API.get("/orders/my");
         setOrders(res.data);
         setError("");
       } catch (err) {
@@ -67,13 +39,6 @@ const Orders = () => {
   return (
     <Container className="mt-4 page-shell">
       <h2 className="page-title">My Orders</h2>
-
-      {user && (
-        <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Table:</strong> {user.table}</p>
-        </div>
-      )}
 
       {error && <Alert variant="danger">{error}</Alert>}
 
