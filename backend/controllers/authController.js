@@ -40,11 +40,17 @@ export const sendOtp = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
+    if (!email.endsWith("@gmail.com")) {
+      return res.status(400).json({ message: "Please use a Gmail address" });
+    }
+
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       return res.status(500).json({
         message: "Email service is not configured (set EMAIL_USER and EMAIL_PASS)",
       });
     }
+
+    await transporter.verify();
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     saveOTP(email, otp);
@@ -58,8 +64,9 @@ export const sendOtp = async (req, res) => {
 
     return res.json({ message: "OTP sent successfully" });
   } catch (error) {
-    console.error("sendOtp failed:", error?.message || error);
-    return res.status(500).json({ message: "Failed to send OTP" });
+    const message = error?.response?.data || error?.message || "Failed to send OTP";
+    console.error("sendOtp failed:", message);
+    return res.status(500).json({ message });
   }
 };
 

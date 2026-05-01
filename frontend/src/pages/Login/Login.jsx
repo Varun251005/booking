@@ -9,6 +9,7 @@ function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ function Login() {
     setOtp("");
     setMessage("");
     setError("");
+    setConfirmPassword("");
   };
 
   const handleSendOtp = async (e) => {
@@ -45,6 +47,11 @@ function Login() {
 
     if (!password.trim()) {
       setError("Please enter your password");
+      return;
+    }
+
+    if (mode === "signup" && password.trim() !== confirmPassword.trim()) {
+      setError("Passwords do not match");
       return;
     }
 
@@ -74,6 +81,11 @@ function Login() {
 
     if (!password.trim()) {
       setError("Please enter your password");
+      return;
+    }
+
+    if (mode === "signup" && password.trim() !== confirmPassword.trim()) {
+      setError("Passwords do not match");
       return;
     }
 
@@ -181,6 +193,20 @@ function Login() {
               disabled={loading}
             />
           </Form.Group>
+
+          {mode === "signup" && (
+            <Form.Group className={step === 2 ? "mb-3" : "mb-4"}>
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onFocus={() => setError("")}
+                disabled={loading}
+              />
+            </Form.Group>
+          )}
 
           {step === 2 && (
             <Form.Group className="mb-4">
