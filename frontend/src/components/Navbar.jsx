@@ -16,7 +16,7 @@ const AppNavbar = () => {
     if (userData) {
       try {
         const user = JSON.parse(userData);
-        setUserName(user.name);
+        setUserName(user.name || user.email || "");
       } catch (err) {
         console.error("Error parsing user data:", err);
       }
