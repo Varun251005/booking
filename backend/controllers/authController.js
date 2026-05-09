@@ -96,9 +96,24 @@ export const verifyOtpAndLogin = async (req, res) => {
   try {
     const email = (req.body.email || "").trim().toLowerCase();
     const otp = String(req.body.otp || "").trim();
+    const password = String(req.body.password || "");
+    const name = req.body.name ? String(req.body.name).trim() : "";
+    const mode = String(req.body.mode || "signin").toLowerCase();
 
     if (!email || !otp) {
       return res.status(400).json({ message: "Email and OTP are required" });
+    }
+
+    if (!password.trim()) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    if (!['signin', 'signup'].includes(mode)) {
+      return res.status(400).json({ message: "mode must be 'signin' or 'signup'" });
+    }
+
+    if (mode === "signup" && !name) {
+      return res.status(400).json({ message: "Name is required for signup" });
     }
 
     const isValid = verifyOTP(email, otp);
@@ -108,15 +123,37 @@ export const verifyOtpAndLogin = async (req, res) => {
 
     let user = await User.findOne({ email });
 
-    if (!user) {
+    if (mode === "signup") {
+      if (user) {
+        return res.status(400).json({ message: "User already exists. Please sign in." });
+      }
+
+      const hashed = await bcrypt.hash(password, 10);
       user = await User.create({
+        name,
         email,
+        password: hashed,
         isVerified: true,
         role: "user",
       });
-    } else if (!user.isVerified) {
-      user.isVerified = true;
-      await user.save();
+    } else {
+      if (!user) {
+        return res.status(400).json({ message: "User not found. Please sign up." });
+      }
+
+      if (!user.password) {
+        return res.status(400).json({ message: "Password not set. Please sign up." });
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      if (!user.isVerified) {
+        user.isVerified = true;
+        await user.save();
+      }
     }
 
     const token = jwt.sign(
@@ -129,6 +166,7 @@ export const verifyOtpAndLogin = async (req, res) => {
       token,
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
         role: user.role || "user",
         isVerified: user.isVerified,
