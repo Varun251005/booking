@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home/home";
 import Cart from "./pages/Cart/cart";
 import Orders from "./pages/Orders";
@@ -9,13 +9,8 @@ import AdminOrders from "./pages/admin/Orders";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminFoods from "./pages/admin/Foods";
 import AdminRoute from "./components/AdminRoute";
+import PrivateRoute from "./components/PrivateRoute";
 import AppNavbar from "./components/Navbar";
-
-// PrivateRoute component - protects routes that require user login
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" replace />;
-};
 
 function App() {
   return (
