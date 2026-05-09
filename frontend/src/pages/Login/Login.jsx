@@ -1,18 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import API from "../../services/api";
 import "./login.css";
 
 function Login() {
-  const [mode, setMode] = useState("signin");
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -22,18 +19,23 @@ function Login() {
     setOtp("");
     setMessage("");
     setError("");
-    setConfirmPassword("");
+    setResendCooldown(0);
   };
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const handleSendOtp = async (e) => {
     e?.preventDefault?.();
 
     const normalizedEmail = email.trim().toLowerCase();
-
-    if (mode === "signup" && !name.trim()) {
-      setError("Please enter your name");
-      return;
-    }
 
     if (!normalizedEmail) {
       setError("Please enter your email");
@@ -42,16 +44,6 @@ function Login() {
 
     if (!normalizedEmail.endsWith("@gmail.com")) {
       setError("Please use a Gmail address (example@gmail.com)");
-      return;
-    }
-
-    if (!password.trim()) {
-      setError("Please enter your password");
-      return;
-    }
-
-    if (mode === "signup" && password.trim() !== confirmPassword.trim()) {
-      setError("Passwords do not match");
       return;
     }
 
@@ -64,6 +56,7 @@ function Login() {
 
       setStep(2);
       setMessage("OTP sent to your email");
+      setResendCooldown(30);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP");
     } finally {
@@ -79,30 +72,12 @@ function Login() {
       return;
     }
 
-    if (!password.trim()) {
-      setError("Please enter your password");
-      return;
-    }
-
-    if (mode === "signup" && password.trim() !== confirmPassword.trim()) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (mode === "signup" && !name.trim()) {
-      setError("Please enter your name");
-      return;
-    }
-
     try {
       setLoading(true);
       setError("");
 
       const res = await API.post("/auth/verify-otp", {
-        mode,
-        name: name.trim(),
         email: email.trim().toLowerCase(),
-        password,
         otp: otp.trim(),
       });
 
@@ -122,54 +97,13 @@ function Login() {
   return (
     <Container className="login-container">
       <div className="login-box">
-        <h2 className="login-title">Authentication</h2>
-        <p className="login-subtitle">
-          {mode === "signup" ? "Create account with OTP" : "Sign in with OTP"}
-        </p>
+        <h2 className="login-title">Email OTP Login</h2>
+        <p className="login-subtitle">Sign in with a one-time password</p>
 
         {error && <Alert variant="danger">{error}</Alert>}
         {message && <Alert variant="success">{message}</Alert>}
 
-        <div className="d-flex gap-2 mb-3">
-          <Button
-            type="button"
-            variant={mode === "signin" ? "dark" : "outline-dark"}
-            className="w-100"
-            onClick={() => {
-              setMode("signin");
-              resetFlow();
-            }}
-            disabled={loading}
-          >
-            Sign In
-          </Button>
-          <Button
-            type="button"
-            variant={mode === "signup" ? "dark" : "outline-dark"}
-            className="w-100"
-            onClick={() => {
-              setMode("signup");
-              resetFlow();
-            }}
-            disabled={loading}
-          >
-            Sign Up
-          </Button>
-        </div>
-
         <Form onSubmit={step === 1 ? handleSendOtp : handleVerifyOtp}>
-          <Form.Group className="mb-3">
-            <Form.Label>User Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onFocus={() => setError("")}
-              disabled={loading}
-            />
-          </Form.Group>
-
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -181,32 +115,6 @@ function Login() {
               disabled={step === 2}
             />
           </Form.Group>
-
-          <Form.Group className={step === 2 ? "mb-3" : "mb-4"}>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setError("")}
-              disabled={loading}
-            />
-          </Form.Group>
-
-          {mode === "signup" && (
-            <Form.Group className={step === 2 ? "mb-3" : "mb-4"}>
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                onFocus={() => setError("")}
-                disabled={loading}
-              />
-            </Form.Group>
-          )}
 
           {step === 2 && (
             <Form.Group className="mb-4">
@@ -228,9 +136,7 @@ function Login() {
               ? "Please wait..."
               : step === 1
                 ? "Send OTP"
-                : mode === "signup"
-                  ? "Verify & Sign Up"
-                  : "Verify & Sign In"}
+                : "Verify OTP"}
           </Button>
 
           {step === 2 && (
@@ -238,10 +144,12 @@ function Login() {
               variant="outline-secondary"
               type="button"
               className="w-100 mt-2"
-              disabled={loading}
+              disabled={loading || resendCooldown > 0}
               onClick={handleSendOtp}
             >
-              Resend OTP
+              {resendCooldown > 0
+                ? `Resend OTP in ${resendCooldown}s`
+                : "Resend OTP"}
             </Button>
           )}
 
