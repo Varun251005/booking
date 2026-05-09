@@ -5,7 +5,11 @@ import API from "../../services/api";
 import "./login.css";
 
 function Login() {
+  const [mode, setMode] = useState("signin");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -37,6 +41,11 @@ function Login() {
 
     const normalizedEmail = email.trim().toLowerCase();
 
+    if (mode === "signup" && !name.trim()) {
+      setError("Please enter your name");
+      return;
+    }
+
     if (!normalizedEmail) {
       setError("Please enter your email");
       return;
@@ -44,6 +53,16 @@ function Login() {
 
     if (!normalizedEmail.endsWith("@gmail.com")) {
       setError("Please use a Gmail address (example@gmail.com)");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Please enter your password");
+      return;
+    }
+
+    if (mode === "signup" && password.trim() !== confirmPassword.trim()) {
+      setError("Passwords do not match");
       return;
     }
 
@@ -72,12 +91,30 @@ function Login() {
       return;
     }
 
+    if (!password.trim()) {
+      setError("Please enter your password");
+      return;
+    }
+
+    if (mode === "signup" && password.trim() !== confirmPassword.trim()) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (mode === "signup" && !name.trim()) {
+      setError("Please enter your name");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
 
       const res = await API.post("/auth/verify-otp", {
+        mode,
+        name: name.trim(),
         email: email.trim().toLowerCase(),
+        password,
         otp: otp.trim(),
       });
 
@@ -98,12 +135,55 @@ function Login() {
     <Container className="login-container">
       <div className="login-box">
         <h2 className="login-title">Email OTP Login</h2>
-        <p className="login-subtitle">Sign in with a one-time password</p>
+        <p className="login-subtitle">
+          {mode === "signup" ? "Create account with OTP" : "Sign in with OTP"}
+        </p>
 
         {error && <Alert variant="danger">{error}</Alert>}
         {message && <Alert variant="success">{message}</Alert>}
 
+        <div className="d-flex gap-2 mb-3">
+          <Button
+            type="button"
+            variant={mode === "signin" ? "dark" : "outline-dark"}
+            className="w-100"
+            onClick={() => {
+              setMode("signin");
+              resetFlow();
+            }}
+            disabled={loading}
+          >
+            Sign In
+          </Button>
+          <Button
+            type="button"
+            variant={mode === "signup" ? "dark" : "outline-dark"}
+            className="w-100"
+            onClick={() => {
+              setMode("signup");
+              resetFlow();
+            }}
+            disabled={loading}
+          >
+            Sign Up
+          </Button>
+        </div>
+
         <Form onSubmit={step === 1 ? handleSendOtp : handleVerifyOtp}>
+          {mode === "signup" && (
+            <Form.Group className="mb-3">
+              <Form.Label>User Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onFocus={() => setError("")}
+                disabled={loading}
+              />
+            </Form.Group>
+          )}
+
           <Form.Group className="mb-3">
             <Form.Label>Email</Form.Label>
             <Form.Control
@@ -115,6 +195,32 @@ function Login() {
               disabled={step === 2}
             />
           </Form.Group>
+
+          <Form.Group className={step === 2 ? "mb-3" : "mb-4"}>
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => setError("")}
+              disabled={loading}
+            />
+          </Form.Group>
+
+          {mode === "signup" && (
+            <Form.Group className={step === 2 ? "mb-3" : "mb-4"}>
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onFocus={() => setError("")}
+                disabled={loading}
+              />
+            </Form.Group>
+          )}
 
           {step === 2 && (
             <Form.Group className="mb-4">
@@ -136,7 +242,9 @@ function Login() {
               ? "Please wait..."
               : step === 1
                 ? "Send OTP"
-                : "Verify OTP"}
+                : mode === "signup"
+                  ? "Verify & Sign Up"
+                  : "Verify & Sign In"}
           </Button>
 
           {step === 2 && (
