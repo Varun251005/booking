@@ -9,12 +9,21 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import foodRoutes from "./routes/foodRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-
+process.env.EMAIL_USER
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 connectDB();
+
+const maskSecret = (value) => {
+  if (!value) return "(missing)";
+  const visible = value.slice(-3);
+  return `***${visible}`;
+};
+
+console.log("EMAIL_USER:", process.env.EMAIL_USER || "(missing)");
+console.log("EMAIL_PASS:", maskSecret(process.env.EMAIL_PASS));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
