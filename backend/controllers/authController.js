@@ -36,6 +36,9 @@ export const sendOtp = async (req, res) => {
   try {
     const email = (req.body.email || "").trim().toLowerCase();
 
+    const isPlaceholder = (value) =>
+      !value || value.includes("yourgmail") || value.includes("your_gmail_app_password");
+
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
@@ -44,9 +47,15 @@ export const sendOtp = async (req, res) => {
       return res.status(400).json({ message: "Please use a Gmail address" });
     }
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    if (
+      !process.env.EMAIL_USER ||
+      !process.env.EMAIL_PASS ||
+      isPlaceholder(process.env.EMAIL_USER) ||
+      isPlaceholder(process.env.EMAIL_PASS)
+    ) {
       return res.status(500).json({
-        message: "Email service is not configured (set EMAIL_USER and EMAIL_PASS)",
+        message:
+          "Email service is not configured. Set EMAIL_USER and EMAIL_PASS to a Gmail account + app password.",
       });
     }
 
@@ -55,11 +64,24 @@ export const sendOtp = async (req, res) => {
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     saveOTP(email, otp);
 
+    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+    const subject = "Your OTP Code";
+    const text = `Your OTP is ${otp}. It will expire in 5 minutes.`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="margin: 0 0 12px;">Your OTP Code</h2>
+        <p>Use the code below to continue logging in:</p>
+        <div style="font-size: 24px; font-weight: bold; letter-spacing: 3px;">${otp}</div>
+        <p style="margin-top: 12px;">This code expires in 5 minutes.</p>
+      </div>
+    `;
+
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: fromAddress,
       to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+      subject,
+      text,
+      html,
     });
 
     return res.json({ message: "OTP sent successfully" });
