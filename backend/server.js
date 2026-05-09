@@ -16,14 +16,6 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
 connectDB();
 
-const maskSecret = (value) => {
-  if (!value) return "(missing)";
-  const visible = value.slice(-3);
-  return `***${visible}`;
-};
-
-console.log("EMAIL_USER:", process.env.EMAIL_USER || "(missing)");
-console.log("EMAIL_PASS:", maskSecret(process.env.EMAIL_PASS));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
