@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import API from "../../services/api";
@@ -10,7 +10,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [otp, setOtp] = useState("");
+  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -20,11 +20,14 @@ function Login() {
 
   const resetFlow = () => {
     setStep(1);
-    setOtp("");
+    setOtpDigits(["", "", "", "", "", ""]);
     setMessage("");
     setError("");
     setResendCooldown(0);
   };
+
+  const otpRefs = useRef([]);
+  const otpValue = useMemo(() => otpDigits.join(""), [otpDigits]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -86,7 +89,7 @@ function Login() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
 
-    if (!otp.trim()) {
+    if (!otpValue.trim()) {
       setError("Please enter OTP");
       return;
     }
@@ -115,7 +118,7 @@ function Login() {
         name: name.trim(),
         email: email.trim().toLowerCase(),
         password,
-        otp: otp.trim(),
+        otp: otpValue.trim(),
       });
 
       localStorage.setItem("token", res.data.token);
@@ -225,15 +228,55 @@ function Login() {
           {step === 2 && (
             <Form.Group className="mb-4">
               <Form.Label>OTP</Form.Label>
-              <Form.Control
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                placeholder="Enter 6-digit OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                onFocus={() => setError("")}
-              />
+              <div className="otp-inputs">
+                {otpDigits.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => {
+                      otpRefs.current[index] = el;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      setError("");
+                      setOtpDigits((prev) => {
+                        const next = [...prev];
+                        next[index] = value;
+                        return next;
+                      });
+                      if (value && index < 5) {
+                        otpRefs.current[index + 1]?.focus();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
+                        otpRefs.current[index - 1]?.focus();
+                      }
+                    }}
+                    onPaste={(e) => {
+                      const paste = e.clipboardData.getData("text").replace(/\D/g, "");
+                      if (!paste) return;
+                      const next = paste.slice(0, 6).split("");
+                      setOtpDigits((prev) => {
+                        const updated = [...prev];
+                        next.forEach((char, idx) => {
+                          updated[idx] = char;
+                        });
+                        return updated;
+                      });
+                      const lastIndex = Math.min(next.length, 6) - 1;
+                      if (lastIndex >= 0) {
+                        otpRefs.current[lastIndex]?.focus();
+                      }
+                      e.preventDefault();
+                    }}
+                    className="otp-input"
+                  />
+                ))}
+              </div>
             </Form.Group>
           )}
 

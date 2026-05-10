@@ -82,3 +82,42 @@
   border-radius: 8px;
   margin-bottom: 20px;
 }
+
+.otp-inputs {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.otp-input {
+  height: 44px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: #1a1a1a;
+  box-shadow: 0 0 0 0.2rem rgba(26, 26, 26, 0.15);
+}
+
+@media (max-width: 576px) {
+  .login-box {
+    padding: 24px;
+    margin: 0 14px;
+  }
+
+  .otp-inputs {
+    gap: 6px;
+  }
+
+  .otp-input {
+    height: 40px;
+    font-size: 16px;
+  }
+}
