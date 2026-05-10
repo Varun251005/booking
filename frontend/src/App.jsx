@@ -3,6 +3,7 @@ import Home from "./pages/home/home";
 import Cart from "./pages/Cart/cart";
 import Orders from "./pages/Orders";
 import Login from "./pages/Login/Login";
+import Profile from "./pages/Profile/Profile";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AddFood from "./pages/admin/AddFood";
 import AdminOrders from "./pages/admin/Orders";
@@ -37,6 +38,11 @@ function App() {
                 <Route path="/orders" element={
                   <PrivateRoute>
                     <Orders />
+                  </PrivateRoute>
+                } />
+                <Route path="/profile" element={
+                  <PrivateRoute>
+                    <Profile />
                   </PrivateRoute>
                 } />
                 <Route path="/admin" element={<AdminLogin />} />
