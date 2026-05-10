@@ -29,6 +29,7 @@ const Orders = () => {
     const colors = {
       pending: "warning",
       preparing: "info",
+      delivered: "success",
       ready: "success",
       completed: "success",
       cancelled: "danger",
