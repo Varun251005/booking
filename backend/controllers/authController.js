@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken";
 import transporter from "../config/mailer.js";
 import { saveOTP, verifyOTP } from "../utils/otpStore.js";
 
+const otpSendTracker = new Map();
+const OTP_COOLDOWN_MS = 60 * 1000;
+
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -47,6 +50,13 @@ export const sendOtp = async (req, res) => {
       return res.status(400).json({ message: "Please use a Gmail address" });
     }
 
+    const lastSentAt = otpSendTracker.get(email) || 0;
+    const now = Date.now();
+    if (now - lastSentAt < OTP_COOLDOWN_MS) {
+      const secondsLeft = Math.ceil((OTP_COOLDOWN_MS - (now - lastSentAt)) / 1000);
+      return res.status(429).json({ message: `Please wait ${secondsLeft}s before requesting another OTP` });
+    }
+
     if (
       !process.env.EMAIL_USER ||
       !process.env.EMAIL_PASS ||
@@ -83,6 +93,8 @@ export const sendOtp = async (req, res) => {
       text,
       html,
     });
+
+    otpSendTracker.set(email, now);
 
     return res.json({ message: "OTP sent successfully" });
   } catch (error) {
