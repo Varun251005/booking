@@ -3,8 +3,11 @@ import mongoose from "mongoose";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import multer from "multer";
 import Food from "../models/Food.js";
 import defaultFoods from "../data/defaultFoods.js";
+import auth from "../middleware/auth.js";
+import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
@@ -26,6 +29,18 @@ const inMemoryFoods = defaultFoods.map((food, index) => ({
   _id: `local-food-${index + 1}`,
   ...food,
 }));
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+const requireAdmin = (req, res, next) => {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ message: "Access denied" });
+  }
+  return next();
+};
 
 router.get("/saved-images", async (req, res) => {
   try {
@@ -65,7 +80,7 @@ router.get("/", async (req, res) => {
 });
 
 // ADD FOOD (ADMIN)
-router.post("/", async (req, res) => {
+router.post("/", auth, requireAdmin, async (req, res) => {
   const payload = {
     ...req.body,
     price: Number(req.body.price),
@@ -91,7 +106,7 @@ router.post("/", async (req, res) => {
 });
 
 // DELETE FOOD (ADMIN)
-router.delete("/:id", async (req, res) => {
+router.delete(":id", auth, requireAdmin, async (req, res) => {
   const { id } = req.params;
 
   if (!isDatabaseConnected()) {
@@ -118,7 +133,37 @@ router.delete("/:id", async (req, res) => {
   return res.json({ message: "Food deleted" });
 });
 
-router.post("/seed-defaults", async (req, res) => {
+// UPLOAD FOOD IMAGE (ADMIN)
+router.post("/upload", auth, requireAdmin, upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "Image file is required" });
+  }
+
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    return res.status(500).json({ message: "Cloudinary is not configured" });
+  }
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "orderease/foods" },
+        (error, uploaded) => {
+          if (error) return reject(error);
+          return resolve(uploaded);
+        }
+      );
+
+      stream.end(req.file.buffer);
+    });
+
+    return res.json({ url: result.secure_url });
+  } catch (error) {
+    console.error("Cloudinary upload failed:", error?.message || error);
+    return res.status(500).json({ message: "Image upload failed" });
+  }
+});
+
+router.post("/seed-defaults", auth, requireAdmin, async (req, res) => {
   if (!isDatabaseConnected()) {
     return res.status(400).json({
       message: "MongoDB is not connected. Running with in-memory default foods.",
