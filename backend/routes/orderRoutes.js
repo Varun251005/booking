@@ -8,6 +8,7 @@ const router = express.Router();
 const isDatabaseConnected = () => mongoose.connection.readyState === 1;
 const inMemoryOrders = [];
 const validPaymentStatuses = ["pending", "paid"];
+const validOrderStatuses = ["pending", "preparing", "delivered", "cancelled"];
 
 const normalizeOrderItems = (items = []) =>
   items
@@ -85,22 +86,36 @@ router.get("/", auth, async (req, res) => {
     return res.status(403).json({ message: "Access denied" });
   }
 
-  const { name, table, deviceId, sessionId } = req.query;
+  const { name, table, deviceId, sessionId, status, paymentStatus } = req.query;
   const tableNumber = table !== undefined ? Number(table) : undefined;
   const deviceIdValue = deviceId ? String(deviceId) : undefined;
   const sessionIdValue = sessionId ? String(sessionId) : undefined;
+  const statusValue = status ? String(status).toLowerCase() : undefined;
+  const paymentStatusValue = paymentStatus ? String(paymentStatus).toLowerCase() : undefined;
 
   if (table !== undefined && Number.isNaN(tableNumber)) {
     return res.status(400).json({ message: "Table must be a valid number" });
   }
 
+  if (statusValue && !validOrderStatuses.includes(statusValue)) {
+    return res.status(400).json({ message: "Invalid status filter" });
+  }
+
+  if (paymentStatusValue && !validPaymentStatuses.includes(paymentStatusValue)) {
+    return res.status(400).json({ message: "Invalid payment status filter" });
+  }
+
   if (!isDatabaseConnected()) {
-    if (name || table !== undefined || deviceIdValue || sessionIdValue) {
+    if (name || table !== undefined || deviceIdValue || sessionIdValue || statusValue || paymentStatusValue) {
       const filtered = inMemoryOrders.filter((order) => {
         if (name && order.name !== name) return false;
         if (table !== undefined && order.tableNumber !== tableNumber) return false;
         if (deviceIdValue && order.deviceId !== deviceIdValue) return false;
         if (sessionIdValue && order.sessionId !== sessionIdValue) return false;
+        if (statusValue && String(order.status).toLowerCase() !== statusValue) return false;
+        if (paymentStatusValue && String(order.paymentStatus || "").toLowerCase() !== paymentStatusValue) {
+          return false;
+        }
         return true;
       });
       return res.json(filtered);
@@ -120,6 +135,12 @@ router.get("/", auth, async (req, res) => {
   }
   if (sessionIdValue) {
     query.sessionId = sessionIdValue;
+  }
+  if (statusValue) {
+    query.status = statusValue;
+  }
+  if (paymentStatusValue) {
+    query.paymentStatus = paymentStatusValue;
   }
 
   const orders = Object.keys(query).length ? await Order.find(query) : await Order.find();
@@ -147,7 +168,11 @@ router.put("/:id", auth, async (req, res) => {
   const updates = {};
 
   if (req.body.status) {
-    updates.status = req.body.status;
+    const nextStatus = String(req.body.status).toLowerCase();
+    if (!validOrderStatuses.includes(nextStatus)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+    updates.status = nextStatus;
   }
 
   if (req.body.paymentStatus) {
