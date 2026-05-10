@@ -258,6 +258,29 @@ body {
   letter-spacing: -0.015em;
 }
 
+@media (max-width: 768px) {
+  .app-navbar {
+    padding: 10px 14px;
+  }
+
+  .brand-glow {
+    font-size: 1.6rem;
+  }
+
+  .page-shell {
+    margin: 18px 12px;
+    padding: 18px;
+  }
+
+  .admin-shell {
+    padding: 18px;
+  }
+
+  .hero-grid {
+    padding: 28px 22px;
+  }
+}
+
 .food-card {
   border: 1px solid #d4cdca;
   border-radius: 18px;
