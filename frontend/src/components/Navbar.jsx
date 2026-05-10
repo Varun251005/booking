@@ -1,4 +1,4 @@
-import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaShoppingCart, FaListAlt, FaSignOutAlt } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
@@ -43,11 +43,6 @@ const AppNavbar = () => {
           <Nav className="ms-auto nav-links">
             {role !== "admin" && (
               <>
-                {userName && (
-                  <span className="navbar-user-name me-3" title={`Logged in as ${userName}`}>
-                    👤 {userName}
-                  </span>
-                )}
                 <Nav.Link as={Link} to="/" aria-label="Home" title="Home">
                   <span className="me-2">Home</span>
                   <FaHome size={20} />
@@ -62,16 +57,24 @@ const AppNavbar = () => {
                     <FaShoppingCart size={20} />
                   </span>
                 </Nav.Link>
-                <Button 
-                  variant="outline-danger" 
-                  size="sm" 
-                  onClick={handleLogout}
-                  className="ms-2"
-                  title="Logout"
+                <NavDropdown
+                  title={userName || "Account"}
+                  id="user-dropdown"
+                  className="ms-lg-3"
+                  align="end"
                 >
-                  <FaSignOutAlt size={16} className="me-2" />
-                  Logout
-                </Button>
+                  <NavDropdown.Item as={Link} to="/orders">
+                    My Orders
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/profile">
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    <FaSignOutAlt size={14} className="me-2" />
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
               </>
             )}
 
