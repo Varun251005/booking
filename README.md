@@ -1,7 +1,7 @@
 # 🍽️ OrderEase – Food Ordering Web App
 
 🚀 **Live Site:** https://orderease0.netlify.app
-
+the live site and web page is still in the progress 
 ---
 
 ## 📌 About
