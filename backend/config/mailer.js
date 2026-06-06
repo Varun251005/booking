@@ -16,6 +16,21 @@ const EMAIL_PORT = Number(process.env.EMAIL_PORT || 465);
 const EMAIL_SECURE = String(process.env.EMAIL_SECURE || "true").toLowerCase() === "true";
 const EMAIL_REQUIRE_TLS = String(process.env.EMAIL_REQUIRE_TLS || (!EMAIL_SECURE ? "true" : "false")).toLowerCase() === "true";
 
+export const getEmailFromAddress = () => {
+  const fallbackAddress = process.env.EMAIL_USER;
+  const configuredAddress = String(process.env.EMAIL_FROM || "").trim();
+
+  if (!configuredAddress) {
+    return fallbackAddress;
+  }
+
+  if (configuredAddress.includes("yourgmail") || configuredAddress.includes("your_gmail_app_password")) {
+    return fallbackAddress;
+  }
+
+  return configuredAddress;
+};
+
 const transporter = nodemailer.createTransport({
   host: EMAIL_HOST,
   port: EMAIL_PORT,
