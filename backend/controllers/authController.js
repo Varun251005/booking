@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import transporter from "../config/mailer.js";
+import transporter, { getEmailFromAddress } from "../config/mailer.js";
 import { saveOTP, verifyOTP } from "../utils/otpStore.js";
 
 const otpSendTracker = new Map();
@@ -74,7 +74,13 @@ export const sendOtp = async (req, res) => {
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     saveOTP(email, otp);
 
-    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+    const fromAddress = getEmailFromAddress();
+    if (!fromAddress) {
+      return res.status(500).json({
+        message: "Email service is not configured. Set EMAIL_USER to a valid Gmail account.",
+      });
+    }
+
     const subject = "Your OTP Code";
     const text = `Your OTP is ${otp}. It will expire in 5 minutes.`;
     const html = `
