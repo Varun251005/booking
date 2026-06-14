@@ -1,27 +1,27 @@
 import { Navbar, Nav, Container, Button, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaShoppingCart, FaListAlt, FaSignOutAlt } from "react-icons/fa";
-import { useCart } from "../context/CartContext";
-import { useState, useEffect } from "react";
+import useCart from "../context/useCart";
 
 const AppNavbar = () => {
   const { cart } = useCart();
   const navigate = useNavigate();
-  const [userName, setUserName] = useState("");
   const role = localStorage.getItem("role");
-
-  useEffect(() => {
-    // Get user name from user object in localStorage
+  const userName = (() => {
     const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        setUserName(user.name || user.email || "");
-      } catch (err) {
-        console.error("Error parsing user data:", err);
-      }
+
+    if (!userData) {
+      return "";
     }
-  }, []);
+
+    try {
+      const user = JSON.parse(userData);
+      return user.name || user.email || "";
+    } catch (err) {
+      console.error("Error parsing user data:", err);
+      return "";
+    }
+  })();
 
   const handleLogout = () => {
     // Clear user data
