@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert, Button, Container, ListGroup } from "react-bootstrap";
-import { useCart } from "../../context/CartContext";
+import useCart from "../../context/useCart";
 import API from "../../services/api";
 
 const Cart = () => {

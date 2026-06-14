@@ -20,7 +20,12 @@ const AdminOrders = () => {
   };
 
   useEffect(() => {
-    fetchOrders();
+    const loadOrdersOnMount = async () => {
+      const res = await API.get("/orders");
+      setOrders(res.data);
+    };
+
+    void loadOrdersOnMount();
   }, []);
 
   const applyFilters = () => {

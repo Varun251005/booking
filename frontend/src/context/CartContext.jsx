@@ -1,8 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
-
-const CartContext = createContext();
-
-export const useCart = () => useContext(CartContext);
+import { useEffect, useState } from "react";
+import CartContext from "./cartContext";
 
 const CART_STORAGE_KEY = "booking_cart_items";
 

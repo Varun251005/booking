@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import FoodCard from "../../components/FoodCard";
 import OfferSlider from "../../components/OfferSlider";
-import { useCart } from "../../context/CartContext";
+import useCart from "../../context/useCart";
 import API from "../../services/api";
 import fallbackFoods from "../../data/foods";
 import { resolveFoodImage } from "../../data/foodImageMap";
@@ -30,7 +30,7 @@ const Home = () => {
         } else {
           setFoods(fallbackFoods);
         }
-      } catch (err) {
+      } catch {
         setFoods(fallbackFoods);
         setError("Could not load foods from server. Showing available menu.");
       } finally {

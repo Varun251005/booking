@@ -36,7 +36,7 @@ const AdminLogin = () => {
       localStorage.setItem("role", response.data.user?.role || "");
       localStorage.setItem("userRole", response.data.user?.role || "");
 
-      window.location.href = "/admin/dashboard";
+      navigate("/admin/dashboard");
     } catch {
       alert("Invalid email or password");
     } finally {

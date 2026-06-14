@@ -20,7 +20,19 @@ const AdminFoods = () => {
   };
 
   useEffect(() => {
-    loadFoods();
+    const loadFoodsOnMount = async () => {
+      try {
+        setError("");
+        const response = await API.get("/foods");
+        setFoods(response.data ?? []);
+      } catch {
+        setError("Could not load foods. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadFoodsOnMount();
   }, []);
 
   const handleDelete = async (foodId) => {
