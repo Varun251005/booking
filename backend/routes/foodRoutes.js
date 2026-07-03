@@ -106,7 +106,7 @@ router.post("/", auth, requireAdmin, async (req, res) => {
 });
 
 // DELETE FOOD (ADMIN)
-router.delete(":id", auth, requireAdmin, async (req, res) => {
+router.delete("/:id", auth, requireAdmin, async (req, res) => {
   const { id } = req.params;
 
   if (!isDatabaseConnected()) {
