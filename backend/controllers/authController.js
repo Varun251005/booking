@@ -69,7 +69,6 @@ export const sendOtp = async (req, res) => {
       });
     }
 
-    await transporter.verify();
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     saveOTP(email, otp);
@@ -92,6 +91,8 @@ export const sendOtp = async (req, res) => {
       </div>
     `;
 
+    otpSendTracker.set(email, now);
+
     await transporter.sendMail({
       from: fromAddress,
       to: email,
@@ -99,8 +100,6 @@ export const sendOtp = async (req, res) => {
       text,
       html,
     });
-
-    otpSendTracker.set(email, now);
 
     return res.json({ message: "OTP sent successfully" });
   } catch (error) {
