@@ -36,13 +36,16 @@ const transporter = nodemailer.createTransport({
   port: EMAIL_PORT,
   secure: EMAIL_SECURE,
   requireTLS: EMAIL_REQUIRE_TLS,
+  pool: true,
+  maxConnections: 5,
+  maxMessages: 100,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
+  connectionTimeout: 8000,
+  greetingTimeout: 8000,
+  socketTimeout: 8000,
 });
 
 export default transporter;
