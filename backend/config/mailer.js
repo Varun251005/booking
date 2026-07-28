@@ -46,6 +46,7 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 8000,
   greetingTimeout: 8000,
   socketTimeout: 8000,
+  family: 4, // Force IPv4 — Render free tier cannot reach Gmail SMTP over IPv6
 });
 
 export default transporter;
