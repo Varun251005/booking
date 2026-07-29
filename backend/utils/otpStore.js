@@ -1,6 +1,6 @@
 const otpStore = new Map();
 
-const OTP_TTL_MS = 5 * 60 * 1000;
+const OTP_TTL_MS = 60 * 1000;
 
 export const saveOTP = (email, otp) => {
   otpStore.set(email, {
